@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +34,7 @@ export function Stats({ projects }: { projects: Project[] }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
       {items.map(([k, v]) => (
-        <div key={k} className="rounded-md border bg-card p-4 print-break">
+        <div key={k} className="print-break rounded-lg border border-l-4 border-l-accent bg-card p-4 shadow-sm">
           <div className="text-xs uppercase tracking-wide text-muted-foreground">{k}</div>
           <div className="mt-1 font-serif text-xl font-semibold">{v}</div>
         </div>
@@ -66,6 +66,7 @@ export function ProjectsTable({
       ),
     [projects, q, status, vert],
   );
+  const navigate = useNavigate();
   const sel = "h-9 rounded-md border border-input bg-background px-2 text-sm";
   return (
     <div className="space-y-3">
@@ -82,7 +83,7 @@ export function ProjectsTable({
           </select>
         )}
       </div>
-      <div className="overflow-x-auto rounded-md border bg-card">
+      <div className="overflow-x-auto rounded-lg border bg-card shadow-sm">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
@@ -101,7 +102,7 @@ export function ProjectsTable({
               <tr><td colSpan={8} className="px-3 py-8 text-center text-muted-foreground">No projects yet.</td></tr>
             )}
             {rows.map((p) => (
-              <tr key={p.id} className="border-t hover:bg-muted/50">
+              <tr key={p.id} onClick={() => navigate({ to: "/app/projects/$id", params: { id: p.id } })} className="cursor-pointer border-t transition-colors hover:bg-accent/10">
                 <td className="px-3 py-2 font-medium">
                   <Link to="/app/projects/$id" params={{ id: p.id }} className="text-primary hover:underline">{p.name}</Link>
                 </td>
