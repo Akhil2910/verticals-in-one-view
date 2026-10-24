@@ -6,6 +6,7 @@ import { fetchMe, homeFor } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import logo from "@/assets/nium-logo.png";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -54,7 +55,7 @@ function SignIn() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="hidden flex-col justify-between bg-sidebar p-12 text-sidebar-foreground lg:flex">
-        <div className="text-sm font-semibold uppercase tracking-[0.2em] text-sidebar-primary">NIUM · IT Wing</div>
+        <div className="flex items-center gap-3"><img src={logo} alt="NIUM logo" width={56} height={56} className="h-14 w-14 rounded-full bg-card p-1" /><div><div className="font-serif text-lg font-bold">National Institute of Unani Medicine</div><div className="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-primary">IT Wing · Bengaluru</div></div></div>
         <div>
           <h1 className="text-4xl font-bold leading-tight">Project &amp; Programme Records</h1>
           <p className="mt-4 max-w-md text-sidebar-foreground/80">
@@ -66,6 +67,7 @@ function SignIn() {
       <div className="flex items-center justify-center p-6">
         <form onSubmit={submit} className="w-full max-w-sm space-y-5">
           <div>
+            <img src={logo} alt="NIUM logo" width={64} height={64} className="mb-4 h-16 w-16 lg:hidden" />
             <h2 className="text-2xl font-semibold">Sign in</h2>
             <p className="text-sm text-muted-foreground">Use the login given to you by the IT admin.</p>
           </div>

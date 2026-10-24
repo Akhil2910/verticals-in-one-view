@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchMe } from "@/lib/data";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/nium-logo.png";
 
 export const Route = createFileRoute("/app")({
   ssr: false,
@@ -34,11 +35,14 @@ function AppLayout() {
 
   return (
     <div className="min-h-screen">
-      <header className="no-print bg-sidebar text-sidebar-foreground">
+      <header className="no-print border-b-4 border-accent bg-sidebar text-sidebar-foreground shadow-md">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-6 py-3">
-          <div className="mr-4">
+          <div className="mr-4 flex items-center gap-3">
+            <img src={logo} alt="NIUM logo" width={40} height={40} className="h-10 w-10 rounded-full bg-card p-0.5" />
+            <div>
             <div className="font-serif text-lg font-bold leading-none">NIUM Records</div>
             <div className="text-[10px] uppercase tracking-[0.2em] text-sidebar-primary">Projects &amp; Programmes</div>
+            </div>
           </div>
           <nav className="flex flex-wrap gap-1">
             {me.role !== "vertical_head" && <Link to="/app/dashboard" className={linkCls} activeProps={activeCls}>Dashboard</Link>}
