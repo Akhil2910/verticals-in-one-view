@@ -105,16 +105,19 @@ export function ProjectForm({
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <fieldset className="rounded-md border bg-card p-5">
-      <legend className="px-2 font-serif text-base font-semibold">{title}</legend>
-      <div className="grid gap-4 sm:grid-cols-2">{children}</div>
-    </fieldset>
+    <section className="overflow-hidden rounded-xl border bg-card shadow-sm">
+      <div className="flex items-center gap-3 border-b bg-muted/40 px-6 py-3">
+        <span className="h-5 w-1 rounded-full bg-accent" />
+        <h2 className="font-serif text-base font-semibold">{title}</h2>
+      </div>
+      <div className="grid gap-5 p-6 sm:grid-cols-2">{children}</div>
+    </section>
   );
 }
 function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
   return (
-    <div className={`space-y-1.5 ${full ? "sm:col-span-2" : ""}`}>
-      <Label className="text-xs">{label}</Label>
+    <div className={`space-y-2 ${full ? "sm:col-span-2" : ""}`}>
+      <Label className="text-xs font-semibold text-muted-foreground">{label}</Label>
       {children}
     </div>
   );

@@ -34,9 +34,10 @@ export function Stats({ projects }: { projects: Project[] }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
       {items.map(([k, v]) => (
-        <div key={k} className="print-break rounded-lg border border-l-4 border-l-accent bg-card p-4 shadow-sm">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">{k}</div>
-          <div className="mt-1 font-serif text-xl font-semibold">{v}</div>
+        <div key={k} className="print-break relative overflow-hidden rounded-xl border bg-card p-4 shadow-sm transition-shadow hover:shadow-md">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary to-accent" />
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{k}</div>
+          <div className="mt-2 font-serif text-xl font-semibold text-primary">{v}</div>
         </div>
       ))}
     </div>
@@ -83,7 +84,7 @@ export function ProjectsTable({
           </select>
         )}
       </div>
-      <div className="overflow-x-auto rounded-lg border bg-card shadow-sm">
+      <div className="overflow-x-auto rounded-xl border bg-card shadow-sm">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
