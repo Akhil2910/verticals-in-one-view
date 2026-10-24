@@ -1,24 +1,90 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { fetchMe, homeFor } from "@/lib/data";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Sign in · NIUM Project Records" },
+      { name: "description", content: "Sign in to the NIUM internal project and programme records portal." },
+      { property: "og:title", content: "Sign in · NIUM Project Records" },
+      { property: "og:description", content: "Sign in to the NIUM internal project and programme records portal." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
+  beforeLoad: async () => {
+    const me = await fetchMe();
+    if (me?.role) throw redirect({ to: homeFor(me.role) });
+  },
+  component: SignIn,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function SignIn() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setBusy(false);
+      toast.error(error.message);
+      return;
+    }
+    const me = await fetchMe();
+    setBusy(false);
+    if (!me?.role) {
+      toast.error("Your account has no role assigned. Contact the IT admin.");
+      await supabase.auth.signOut();
+      return;
+    }
+    navigate({ to: homeFor(me.role), replace: true });
+  }
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="grid min-h-screen lg:grid-cols-2">
+      <div className="hidden flex-col justify-between bg-sidebar p-12 text-sidebar-foreground lg:flex">
+        <div className="text-sm font-semibold uppercase tracking-[0.2em] text-sidebar-primary">NIUM · IT Wing</div>
+        <div>
+          <h1 className="text-4xl font-bold leading-tight">Project &amp; Programme Records</h1>
+          <p className="mt-4 max-w-md text-sidebar-foreground/80">
+            Documentation of all completed and ongoing projects, programmes and trainings across NIUM verticals.
+          </p>
+        </div>
+        <div className="text-xs text-sidebar-foreground/60">As per Circular Roc. No.1078023/NIUM/2026/IT</div>
+      </div>
+      <div className="flex items-center justify-center p-6">
+        <form onSubmit={submit} className="w-full max-w-sm space-y-5">
+          <div>
+            <h2 className="text-2xl font-semibold">Sign in</h2>
+            <p className="text-sm text-muted-foreground">Use the login given to you by the IT admin.</p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="pw">Password</Label>
+            <Input id="pw" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+          </div>
+          <Button type="submit" className="w-full" disabled={busy}>
+            {busy ? "Signing in…" : "Sign in"}
+          </Button>
+          <p className="text-center text-xs text-muted-foreground">
+            First time? <Link to="/setup" className="underline">Set up the admin account</Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
