@@ -66,8 +66,6 @@ export function ProjectForm({
         </Field>
         <Field label="3a. Project Head"><Input {...txt("project_head")} /></Field>
         <Field label="3b. Team Members" full><Textarea rows={2} {...txt("team_members")} /></Field>
-        <Field label="4a. Date of commencement"><Input {...date("start_date")} /></Field>
-        <Field label="4b. Proposed / completed date"><Input {...date("end_date")} /></Field>
       </Section>
 
       <Section title="Status & progress">
@@ -76,6 +74,8 @@ export function ProjectForm({
             {STATUSES.map((s) => <option key={s}>{s}</option>)}
           </select>
         </Field>
+        <Field label="4a. Date of commencement"><Input {...date("start_date")} /></Field>
+        <Field label="4b. Proposed / completed date"><Input {...date("end_date")} /></Field>
         <Field label="6. Physical work completed (%)"><Input type="number" min={0} max={100} value={String(f.physical_progress)} onChange={(e) => set("physical_progress", Math.min(100, Math.max(0, Number(e.target.value || 0))))} /></Field>
         <Field label="5. Progress notes" full><Textarea rows={2} {...txt("progress_notes")} /></Field>
         <Field label="7. Key activities / milestones completed" full><Textarea rows={3} {...txt("milestones_completed")} /></Field>
