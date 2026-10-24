@@ -59,7 +59,7 @@ function AppLayout() {
         className={`no-print fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-sidebar text-sidebar-foreground transition-transform lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="flex items-center gap-3 border-b border-sidebar-border px-5 py-5">
-          <img src={logo} alt="NIUM logo" width={40} height={40} className="h-10 w-10 rounded-full bg-card p-0.5" />
+          <div className="shrink-0 rounded-md bg-card p-1"><img src={logo} alt="NIUM logo" width={44} height={44} className="h-11 w-11 object-contain" /></div>
           <div>
             <div className="font-serif text-lg font-bold leading-none">NIUM Records</div>
             <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-sidebar-primary">Projects &amp; Programmes</div>

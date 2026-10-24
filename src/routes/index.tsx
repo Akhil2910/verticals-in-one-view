@@ -56,7 +56,7 @@ function SignIn() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="hidden flex-col justify-between bg-sidebar p-12 text-sidebar-foreground lg:flex">
-        <div className="flex items-center gap-3"><img src={logo} alt="NIUM logo" width={56} height={56} className="h-14 w-14 rounded-full bg-card p-1" /><div><div className="font-serif text-lg font-bold">National Institute of Urban Management</div><div className="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-primary">IT Wing</div></div></div>
+        <div className="flex items-center gap-4"><div className="rounded-lg bg-card p-2"><img src={logo} alt="NIUM logo" width={72} height={72} className="h-18 w-18 object-contain" /></div><div className="font-serif text-xl font-bold">National Institute of Urban Management</div></div>
         <div>
           <h1 className="text-4xl font-bold leading-tight">Project &amp; Programme Records</h1>
           <p className="mt-4 max-w-md text-sidebar-foreground/80">
@@ -68,7 +68,7 @@ function SignIn() {
       <div className="flex items-center justify-center p-6">
         <form onSubmit={submit} className="w-full max-w-sm space-y-5">
           <div>
-            <img src={logo} alt="NIUM logo" width={64} height={64} className="mb-4 h-16 w-16 lg:hidden" />
+            <img src={logo} alt="NIUM logo" width={80} height={80} className="mb-4 h-20 w-20 object-contain lg:hidden" />
             <h2 className="text-2xl font-semibold">Sign in</h2>
             <p className="text-sm text-muted-foreground">Use the login given to you by the IT admin.</p>
           </div>
