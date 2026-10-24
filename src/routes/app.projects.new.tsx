@@ -29,7 +29,7 @@ function NewProject() {
           setBusy(true);
           const { data, error } = await supabase.from("projects").insert(v).select("id").single();
           setBusy(false);
-          if (error) return toast.error(error.message);
+          if (error) { toast.error(error.message); return; }
           await qc.invalidateQueries({ queryKey: ["projects"] });
           toast.success("Project saved");
           navigate({ to: "/app/projects/$id", params: { id: data.id } });

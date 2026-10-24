@@ -25,7 +25,7 @@ function ViewProject() {
   async function remove() {
     if (!confirm("Delete this project permanently?")) return;
     const { error } = await supabase.from("projects").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await qc.invalidateQueries({ queryKey: ["projects"] });
     toast.success("Deleted");
     navigate({ to: me.role === "vertical_head" ? "/app/vertical" : "/app/dashboard" });

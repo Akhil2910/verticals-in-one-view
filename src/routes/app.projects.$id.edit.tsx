@@ -34,7 +34,7 @@ function EditProject() {
           setBusy(true);
           const { error } = await supabase.from("projects").update(v).eq("id", id);
           setBusy(false);
-          if (error) return toast.error(error.message);
+          if (error) { toast.error(error.message); return; }
           await qc.invalidateQueries({ queryKey: ["projects"] });
           toast.success("Project updated");
           navigate({ to: "/app/projects/$id", params: { id } });

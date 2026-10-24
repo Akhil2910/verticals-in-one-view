@@ -25,7 +25,7 @@ function Verticals() {
   async function add(e: React.FormEvent) {
     e.preventDefault();
     const { error } = await supabase.from("verticals").insert({ name: name.trim() });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setName("");
     refresh();
   }
@@ -47,14 +47,14 @@ function Row({ v, onChange }: { v: Vertical; onChange: () => void }) {
   const [name, setName] = useState(v.name);
   async function save() {
     const { error } = await supabase.from("verticals").update({ name: name.trim() }).eq("id", v.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Renamed");
     onChange();
   }
   async function remove() {
     if (!confirm(`Delete "${v.name}"?`)) return;
     const { error } = await supabase.from("verticals").delete().eq("id", v.id);
-    if (error) return toast.error(error.code === "23503" ? "This vertical has projects. Move or delete them first." : error.message);
+    if (error) { toast.error(error.code === "23503" ? "This vertical has projects. Move or delete them first." : error.message); return; }
     onChange();
   }
   return (
