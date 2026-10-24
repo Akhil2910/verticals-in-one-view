@@ -14,16 +14,164 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      projects: {
+        Row: {
+          amount_receivable: number
+          amount_received: number
+          created_at: string
+          end_date: string | null
+          expected_completion: string | null
+          expenditure: number
+          id: string
+          issues: string | null
+          milestones_completed: string | null
+          milestones_pending: string | null
+          name: string
+          other_info: string | null
+          physical_progress: number
+          progress_notes: string | null
+          project_head: string | null
+          start_date: string | null
+          status: string
+          team_members: string | null
+          total_cost: number
+          updated_at: string
+          updated_by: string | null
+          updated_by_name: string | null
+          vertical_id: string
+        }
+        Insert: {
+          amount_receivable?: number
+          amount_received?: number
+          created_at?: string
+          end_date?: string | null
+          expected_completion?: string | null
+          expenditure?: number
+          id?: string
+          issues?: string | null
+          milestones_completed?: string | null
+          milestones_pending?: string | null
+          name: string
+          other_info?: string | null
+          physical_progress?: number
+          progress_notes?: string | null
+          project_head?: string | null
+          start_date?: string | null
+          status?: string
+          team_members?: string | null
+          total_cost?: number
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_name?: string | null
+          vertical_id: string
+        }
+        Update: {
+          amount_receivable?: number
+          amount_received?: number
+          created_at?: string
+          end_date?: string | null
+          expected_completion?: string | null
+          expenditure?: number
+          id?: string
+          issues?: string | null
+          milestones_completed?: string | null
+          milestones_pending?: string | null
+          name?: string
+          other_info?: string | null
+          physical_progress?: number
+          progress_notes?: string | null
+          project_head?: string | null
+          start_date?: string | null
+          status?: string
+          team_members?: string | null
+          total_cost?: number
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_name?: string | null
+          vertical_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_vertical_id_fkey"
+            columns: ["vertical_id"]
+            isOneToOne: false
+            referencedRelation: "verticals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+          vertical_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+          vertical_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+          vertical_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_vertical_id_fkey"
+            columns: ["vertical_id"]
+            isOneToOne: false
+            referencedRelation: "verticals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verticals: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      user_vertical: { Args: { _user_id: string }; Returns: string }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "official" | "vertical_head"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +298,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "official", "vertical_head"],
+    },
   },
 } as const
