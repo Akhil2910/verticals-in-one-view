@@ -18,6 +18,7 @@ import { Route as AppVerticalRouteImport } from './routes/app.vertical'
 import { Route as AppAdminUsersRouteImport } from './routes/app.admin.users'
 import { Route as AppAdminVerticalsRouteImport } from './routes/app.admin.verticals'
 import { Route as AppProjectsNewRouteImport } from './routes/app.projects.new'
+import { Route as AppVerticalsIdRouteImport } from './routes/app.verticals.$id'
 import { Route as AppProjectsIdIndexRouteImport } from './routes/app.projects.$id.index'
 import { Route as AppProjectsIdEditRouteImport } from './routes/app.projects.$id.edit'
 
@@ -66,6 +67,11 @@ const AppProjectsNewRoute = AppProjectsNewRouteImport.update({
   path: '/projects/new',
   getParentRoute: () => AppRoute,
 } as any)
+const AppVerticalsIdRoute = AppVerticalsIdRouteImport.update({
+  id: '/verticals/$id',
+  path: '/verticals/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProjectsIdIndexRoute = AppProjectsIdIndexRouteImport.update({
   id: '/projects/$id/',
   path: '/projects/$id/',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/verticals': typeof AppAdminVerticalsRoute
   '/app/projects/new': typeof AppProjectsNewRoute
+  '/app/verticals/$id': typeof AppVerticalsIdRoute
   '/app/projects/$id/edit': typeof AppProjectsIdEditRoute
   '/app/projects/$id/': typeof AppProjectsIdIndexRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/verticals': typeof AppAdminVerticalsRoute
   '/app/projects/new': typeof AppProjectsNewRoute
+  '/app/verticals/$id': typeof AppVerticalsIdRoute
   '/app/projects/$id/edit': typeof AppProjectsIdEditRoute
   '/app/projects/$id': typeof AppProjectsIdIndexRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/verticals': typeof AppAdminVerticalsRoute
   '/app/projects/new': typeof AppProjectsNewRoute
+  '/app/verticals/$id': typeof AppVerticalsIdRoute
   '/app/projects/$id/edit': typeof AppProjectsIdEditRoute
   '/app/projects/$id/': typeof AppProjectsIdIndexRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/app/admin/users'
     | '/app/admin/verticals'
     | '/app/projects/new'
+    | '/app/verticals/$id'
     | '/app/projects/$id/edit'
     | '/app/projects/$id/'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/app/admin/users'
     | '/app/admin/verticals'
     | '/app/projects/new'
+    | '/app/verticals/$id'
     | '/app/projects/$id/edit'
     | '/app/projects/$id'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/app/admin/users'
     | '/app/admin/verticals'
     | '/app/projects/new'
+    | '/app/verticals/$id'
     | '/app/projects/$id/edit'
     | '/app/projects/$id/'
   fileRoutesById: FileRoutesById
@@ -230,6 +242,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProjectsNewRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/verticals/$id': {
+      id: '/app/verticals/$id'
+      path: '/verticals/$id'
+      fullPath: '/app/verticals/$id'
+      preLoaderRoute: typeof AppVerticalsIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/projects/$id/': {
       id: '/app/projects/$id/'
       path: '/projects/$id'
@@ -254,6 +273,7 @@ interface AppRouteChildren {
   AppAdminUsersRoute: typeof AppAdminUsersRoute
   AppAdminVerticalsRoute: typeof AppAdminVerticalsRoute
   AppProjectsNewRoute: typeof AppProjectsNewRoute
+  AppVerticalsIdRoute: typeof AppVerticalsIdRoute
   AppProjectsIdEditRoute: typeof AppProjectsIdEditRoute
   AppProjectsIdIndexRoute: typeof AppProjectsIdIndexRoute
 }
@@ -265,6 +285,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminUsersRoute: AppAdminUsersRoute,
   AppAdminVerticalsRoute: AppAdminVerticalsRoute,
   AppProjectsNewRoute: AppProjectsNewRoute,
+  AppVerticalsIdRoute: AppVerticalsIdRoute,
   AppProjectsIdEditRoute: AppProjectsIdEditRoute,
   AppProjectsIdIndexRoute: AppProjectsIdIndexRoute,
 }

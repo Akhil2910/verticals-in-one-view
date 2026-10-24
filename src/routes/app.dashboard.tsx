@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ProjectsTable, Stats } from "@/components/projects";
 import { inr, projectsQuery, verticalsQuery, yetToReceive } from "@/lib/data";
@@ -16,6 +16,7 @@ export const Route = createFileRoute("/app/dashboard")({
 function Dashboard() {
   const { data: projects } = useSuspenseQuery(projectsQuery);
   const { data: verticals } = useSuspenseQuery(verticalsQuery);
+  const navigate = useNavigate();
   return (
     <div className="space-y-8">
       <div>
@@ -24,8 +25,9 @@ function Dashboard() {
       </div>
       <Stats projects={projects} />
       <section>
-        <h2 className="mb-3 text-xl font-semibold">By vertical</h2>
-        <div className="overflow-x-auto rounded-md border bg-card">
+        <h2 className="mb-1 text-xl font-semibold">By vertical</h2>
+        <p className="mb-3 text-sm text-muted-foreground">Click a vertical to see its projects.</p>
+        <div className="overflow-x-auto rounded-lg border bg-card shadow-sm">
           <table className="w-full text-sm">
             <thead className="bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
               <tr><th className="px-3 py-2">Vertical</th><th className="px-3 py-2 text-right">Projects</th><th className="px-3 py-2 text-right">Ongoing</th><th className="px-3 py-2 text-right">Completed</th><th className="px-3 py-2 text-right">Sanctioned</th><th className="px-3 py-2 text-right">Received</th><th className="px-3 py-2 text-right">Yet to receive</th></tr>
@@ -34,8 +36,8 @@ function Dashboard() {
               {verticals.map((v) => {
                 const ps = projects.filter((p) => p.vertical_id === v.id);
                 return (
-                  <tr key={v.id} className="border-t">
-                    <td className="px-3 py-2 font-medium">{v.name}</td>
+                  <tr key={v.id} onClick={() => navigate({ to: "/app/verticals/$id", params: { id: v.id } })} className="cursor-pointer border-t transition-colors hover:bg-accent/10">
+                    <td className="px-3 py-2 font-medium text-primary">{v.name} <span className="text-muted-foreground">→</span></td>
                     <td className="px-3 py-2 text-right">{ps.length}</td>
                     <td className="px-3 py-2 text-right">{ps.filter((p) => p.status === "Ongoing").length}</td>
                     <td className="px-3 py-2 text-right">{ps.filter((p) => p.status === "Completed").length}</td>
