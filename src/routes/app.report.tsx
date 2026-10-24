@@ -37,7 +37,7 @@ function Report() {
         <Button className="ml-auto" onClick={() => window.print()}>Print / Save as PDF</Button>
       </div>
       <div className="border-b pb-4 text-center">
-        <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">National Institute of Urban Management (NIUM)</div>
+        <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">NIUM</div>
         <h1 className="text-2xl font-bold">Project / Programme Status Report</h1>
         <div className="text-sm text-muted-foreground">
           {vert ? vName(vert) : "All verticals"}{status ? ` · ${status}` : ""} · Generated {new Date().toLocaleDateString("en-IN")}
