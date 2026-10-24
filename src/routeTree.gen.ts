@@ -10,33 +10,159 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as SetupRouteImport } from './routes/setup'
+import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
+import { Route as AppReportRouteImport } from './routes/app.report'
+import { Route as AppVerticalRouteImport } from './routes/app.vertical'
+import { Route as AppAdminUsersRouteImport } from './routes/app.admin.users'
+import { Route as AppAdminVerticalsRouteImport } from './routes/app.admin.verticals'
+import { Route as AppProjectsNewRouteImport } from './routes/app.projects.new'
+import { Route as AppProjectsIdIndexRouteImport } from './routes/app.projects.$id.index'
+import { Route as AppProjectsIdEditRouteImport } from './routes/app.projects.$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SetupRoute = SetupRouteImport.update({
+  id: '/setup',
+  path: '/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportRoute = AppReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppVerticalRoute = AppVerticalRouteImport.update({
+  id: '/vertical',
+  path: '/vertical',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminUsersRoute = AppAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminVerticalsRoute = AppAdminVerticalsRouteImport.update({
+  id: '/admin/verticals',
+  path: '/admin/verticals',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProjectsNewRoute = AppProjectsNewRouteImport.update({
+  id: '/projects/new',
+  path: '/projects/new',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProjectsIdIndexRoute = AppProjectsIdIndexRouteImport.update({
+  id: '/projects/$id/',
+  path: '/projects/$id/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProjectsIdEditRoute = AppProjectsIdEditRouteImport.update({
+  id: '/projects/$id/edit',
+  path: '/projects/$id/edit',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/setup': typeof SetupRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/report': typeof AppReportRoute
+  '/app/vertical': typeof AppVerticalRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
+  '/app/admin/verticals': typeof AppAdminVerticalsRoute
+  '/app/projects/new': typeof AppProjectsNewRoute
+  '/app/projects/$id/edit': typeof AppProjectsIdEditRoute
+  '/app/projects/$id/': typeof AppProjectsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/setup': typeof SetupRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/report': typeof AppReportRoute
+  '/app/vertical': typeof AppVerticalRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
+  '/app/admin/verticals': typeof AppAdminVerticalsRoute
+  '/app/projects/new': typeof AppProjectsNewRoute
+  '/app/projects/$id/edit': typeof AppProjectsIdEditRoute
+  '/app/projects/$id': typeof AppProjectsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/setup': typeof SetupRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/report': typeof AppReportRoute
+  '/app/vertical': typeof AppVerticalRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
+  '/app/admin/verticals': typeof AppAdminVerticalsRoute
+  '/app/projects/new': typeof AppProjectsNewRoute
+  '/app/projects/$id/edit': typeof AppProjectsIdEditRoute
+  '/app/projects/$id/': typeof AppProjectsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/setup'
+    | '/app/dashboard'
+    | '/app/report'
+    | '/app/vertical'
+    | '/app/admin/users'
+    | '/app/admin/verticals'
+    | '/app/projects/new'
+    | '/app/projects/$id/edit'
+    | '/app/projects/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/app'
+    | '/setup'
+    | '/app/dashboard'
+    | '/app/report'
+    | '/app/vertical'
+    | '/app/admin/users'
+    | '/app/admin/verticals'
+    | '/app/projects/new'
+    | '/app/projects/$id/edit'
+    | '/app/projects/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/setup'
+    | '/app/dashboard'
+    | '/app/report'
+    | '/app/vertical'
+    | '/app/admin/users'
+    | '/app/admin/verticals'
+    | '/app/projects/new'
+    | '/app/projects/$id/edit'
+    | '/app/projects/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  SetupRoute: typeof SetupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +174,107 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/setup': {
+      id: '/setup'
+      path: '/setup'
+      fullPath: '/setup'
+      preLoaderRoute: typeof SetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/dashboard': {
+      id: '/app/dashboard'
+      path: '/dashboard'
+      fullPath: '/app/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/report': {
+      id: '/app/report'
+      path: '/report'
+      fullPath: '/app/report'
+      preLoaderRoute: typeof AppReportRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/vertical': {
+      id: '/app/vertical'
+      path: '/vertical'
+      fullPath: '/app/vertical'
+      preLoaderRoute: typeof AppVerticalRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/users': {
+      id: '/app/admin/users'
+      path: '/admin/users'
+      fullPath: '/app/admin/users'
+      preLoaderRoute: typeof AppAdminUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/verticals': {
+      id: '/app/admin/verticals'
+      path: '/admin/verticals'
+      fullPath: '/app/admin/verticals'
+      preLoaderRoute: typeof AppAdminVerticalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/projects/new': {
+      id: '/app/projects/new'
+      path: '/projects/new'
+      fullPath: '/app/projects/new'
+      preLoaderRoute: typeof AppProjectsNewRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/projects/$id/': {
+      id: '/app/projects/$id/'
+      path: '/projects/$id'
+      fullPath: '/app/projects/$id/'
+      preLoaderRoute: typeof AppProjectsIdIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/projects/$id/edit': {
+      id: '/app/projects/$id/edit'
+      path: '/projects/$id/edit'
+      fullPath: '/app/projects/$id/edit'
+      preLoaderRoute: typeof AppProjectsIdEditRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppReportRoute: typeof AppReportRoute
+  AppVerticalRoute: typeof AppVerticalRoute
+  AppAdminUsersRoute: typeof AppAdminUsersRoute
+  AppAdminVerticalsRoute: typeof AppAdminVerticalsRoute
+  AppProjectsNewRoute: typeof AppProjectsNewRoute
+  AppProjectsIdEditRoute: typeof AppProjectsIdEditRoute
+  AppProjectsIdIndexRoute: typeof AppProjectsIdIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppDashboardRoute: AppDashboardRoute,
+  AppReportRoute: AppReportRoute,
+  AppVerticalRoute: AppVerticalRoute,
+  AppAdminUsersRoute: AppAdminUsersRoute,
+  AppAdminVerticalsRoute: AppAdminVerticalsRoute,
+  AppProjectsNewRoute: AppProjectsNewRoute,
+  AppProjectsIdEditRoute: AppProjectsIdEditRoute,
+  AppProjectsIdIndexRoute: AppProjectsIdIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  SetupRoute: SetupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

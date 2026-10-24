@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Architecture rules
+- Signed-in pages live under `src/routes/app*.tsx` with a client-only (`ssr: false`) `/app` layout that loads the user's role into route context; role-specific pages redirect in `beforeLoad`. Why: session lives in browser storage.
+- Roles (admin / official / vertical_head + vertical_id) live only in `public.user_roles`; RLS uses `has_role` and `user_vertical` security-definer functions. Why: prevents privilege escalation.
+- Public signup is disabled; accounts are created only by admin server functions in `src/lib/admin.functions.ts` (the `/setup` page works only while no admin exists). Why: internal tool.
