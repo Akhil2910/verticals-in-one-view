@@ -15,6 +15,8 @@ import { Route as SetupRouteImport } from './routes/setup'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppReportRouteImport } from './routes/app.report'
 import { Route as AppVerticalRouteImport } from './routes/app.vertical'
+import { Route as AppAdminUsersRouteImport } from './routes/app.admin.users'
+import { Route as AppAdminVerticalsRouteImport } from './routes/app.admin.verticals'
 import { Route as AppProjectsNewRouteImport } from './routes/app.projects.new'
 import { Route as AppProjectsIdIndexRouteImport } from './routes/app.projects.$id.index'
 import { Route as AppProjectsIdEditRouteImport } from './routes/app.projects.$id.edit'
@@ -49,6 +51,16 @@ const AppVerticalRoute = AppVerticalRouteImport.update({
   path: '/vertical',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminUsersRoute = AppAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminVerticalsRoute = AppAdminVerticalsRouteImport.update({
+  id: '/admin/verticals',
+  path: '/admin/verticals',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProjectsNewRoute = AppProjectsNewRouteImport.update({
   id: '/projects/new',
   path: '/projects/new',
@@ -72,6 +84,8 @@ export interface FileRoutesByFullPath {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/report': typeof AppReportRoute
   '/app/vertical': typeof AppVerticalRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
+  '/app/admin/verticals': typeof AppAdminVerticalsRoute
   '/app/projects/new': typeof AppProjectsNewRoute
   '/app/projects/$id/edit': typeof AppProjectsIdEditRoute
   '/app/projects/$id/': typeof AppProjectsIdIndexRoute
@@ -83,6 +97,8 @@ export interface FileRoutesByTo {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/report': typeof AppReportRoute
   '/app/vertical': typeof AppVerticalRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
+  '/app/admin/verticals': typeof AppAdminVerticalsRoute
   '/app/projects/new': typeof AppProjectsNewRoute
   '/app/projects/$id/edit': typeof AppProjectsIdEditRoute
   '/app/projects/$id': typeof AppProjectsIdIndexRoute
@@ -95,6 +111,8 @@ export interface FileRoutesById {
   '/app/dashboard': typeof AppDashboardRoute
   '/app/report': typeof AppReportRoute
   '/app/vertical': typeof AppVerticalRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
+  '/app/admin/verticals': typeof AppAdminVerticalsRoute
   '/app/projects/new': typeof AppProjectsNewRoute
   '/app/projects/$id/edit': typeof AppProjectsIdEditRoute
   '/app/projects/$id/': typeof AppProjectsIdIndexRoute
@@ -108,6 +126,8 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/report'
     | '/app/vertical'
+    | '/app/admin/users'
+    | '/app/admin/verticals'
     | '/app/projects/new'
     | '/app/projects/$id/edit'
     | '/app/projects/$id/'
@@ -119,6 +139,8 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/report'
     | '/app/vertical'
+    | '/app/admin/users'
+    | '/app/admin/verticals'
     | '/app/projects/new'
     | '/app/projects/$id/edit'
     | '/app/projects/$id'
@@ -130,6 +152,8 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/report'
     | '/app/vertical'
+    | '/app/admin/users'
+    | '/app/admin/verticals'
     | '/app/projects/new'
     | '/app/projects/$id/edit'
     | '/app/projects/$id/'
@@ -185,6 +209,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppVerticalRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/users': {
+      id: '/app/admin/users'
+      path: '/admin/users'
+      fullPath: '/app/admin/users'
+      preLoaderRoute: typeof AppAdminUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/verticals': {
+      id: '/app/admin/verticals'
+      path: '/admin/verticals'
+      fullPath: '/app/admin/verticals'
+      preLoaderRoute: typeof AppAdminVerticalsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/projects/new': {
       id: '/app/projects/new'
       path: '/projects/new'
@@ -213,6 +251,8 @@ interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppReportRoute: typeof AppReportRoute
   AppVerticalRoute: typeof AppVerticalRoute
+  AppAdminUsersRoute: typeof AppAdminUsersRoute
+  AppAdminVerticalsRoute: typeof AppAdminVerticalsRoute
   AppProjectsNewRoute: typeof AppProjectsNewRoute
   AppProjectsIdEditRoute: typeof AppProjectsIdEditRoute
   AppProjectsIdIndexRoute: typeof AppProjectsIdIndexRoute
@@ -222,6 +262,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppReportRoute: AppReportRoute,
   AppVerticalRoute: AppVerticalRoute,
+  AppAdminUsersRoute: AppAdminUsersRoute,
+  AppAdminVerticalsRoute: AppAdminVerticalsRoute,
   AppProjectsNewRoute: AppProjectsNewRoute,
   AppProjectsIdEditRoute: AppProjectsIdEditRoute,
   AppProjectsIdIndexRoute: AppProjectsIdIndexRoute,
