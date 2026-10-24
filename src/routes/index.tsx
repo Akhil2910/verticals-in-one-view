@@ -56,7 +56,7 @@ function SignIn() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="hidden flex-col justify-between bg-sidebar p-12 text-sidebar-foreground lg:flex">
-        <div className="flex items-center gap-3"><img src={logo} alt="NIUM logo" width={56} height={56} className="h-14 w-14 rounded-full bg-card p-1" /><div><div className="font-serif text-lg font-bold">National Institute of Unani Medicine</div><div className="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-primary">IT Wing · Bengaluru</div></div></div>
+        <div className="flex items-center gap-3"><img src={logo} alt="NIUM logo" width={56} height={56} className="h-14 w-14 rounded-full bg-card p-1" /><div><div className="font-serif text-lg font-bold">National Institute of Urban Management</div><div className="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-primary">IT Wing</div></div></div>
         <div>
           <h1 className="text-4xl font-bold leading-tight">Project &amp; Programme Records</h1>
           <p className="mt-4 max-w-md text-sidebar-foreground/80">
