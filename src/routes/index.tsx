@@ -6,7 +6,8 @@ import { fetchMe, homeFor } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import logo from "@/assets/nium-logo.png";
+import logoAsset from "@/assets/nium-logo.png.asset.json";
+const logo = logoAsset.url;
 
 export const Route = createFileRoute("/")({
   ssr: false,

@@ -3,7 +3,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchMe } from "@/lib/data";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/nium-logo.png";
+import logoAsset from "@/assets/nium-logo.png.asset.json";
+const logo = logoAsset.url;
 
 export const Route = createFileRoute("/app")({
   ssr: false,
