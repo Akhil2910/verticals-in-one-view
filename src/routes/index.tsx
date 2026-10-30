@@ -33,6 +33,7 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showPw, setShowPw] = useState(true);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -78,7 +79,12 @@ function SignIn() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="pw">Password</Label>
-            <Input id="pw" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+            <div className="relative">
+              <Input id="pw" type={showPw ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)} className="pr-16" />
+              <button type="button" onClick={() => setShowPw(!showPw)} className="absolute inset-y-0 right-2 text-xs font-medium text-muted-foreground hover:text-foreground">
+                {showPw ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
           <Button type="submit" className="w-full" disabled={busy}>
             {busy ? "Signing in…" : "Sign in"}
