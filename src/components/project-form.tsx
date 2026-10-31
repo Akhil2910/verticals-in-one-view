@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { inr, yetToReceive, type Project, type Vertical } from "@/lib/data";
+import { inr, yetToReceive, isCapacityBuilding, type Project, type Vertical } from "@/lib/data";
 import { STATUSES } from "./projects";
 
 export type ProjectInput = Omit<Project, "id" | "created_at" | "updated_at" | "updated_by" | "updated_by_name">;
@@ -18,6 +18,7 @@ const empty: ProjectInput = {
   status: "Ongoing",
   progress_notes: "",
   physical_progress: 0,
+  physical_progress_not_applicable: false,
   milestones_completed: "",
   milestones_pending: "",
   total_cost: 0,
@@ -45,7 +46,7 @@ export function ProjectForm({
 }) {
   const [f, setF] = useState<ProjectInput>({ ...empty, ...initial, vertical_id: lockedVertical ?? initial?.vertical_id ?? "" });
   const set = <K extends keyof ProjectInput>(k: K, v: ProjectInput[K]) => setF((s) => ({ ...s, [k]: v }));
-  const isCapacity = /capacity/i.test(verticals.find((v) => v.id === f.vertical_id)?.name ?? "");
+  const isCapacity = isCapacityBuilding(verticals.find((v) => v.id === f.vertical_id)?.name ?? "");
   const txt = (k: keyof ProjectInput) => ({ value: (f[k] as string) ?? "", onChange: (e: { target: { value: string } }) => set(k, e.target.value as never) });
   const date = (k: keyof ProjectInput) => ({ type: "date", value: (f[k] as string) ?? "", onChange: (e: { target: { value: string } }) => set(k, (e.target.value || null) as never) });
   const num = (k: keyof ProjectInput) => ({ type: "number", min: 0, step: "0.01", value: String(f[k] ?? 0), onChange: (e: { target: { value: string } }) => set(k, Number(e.target.value || 0) as never) });
@@ -54,7 +55,7 @@ export function ProjectForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit(f);
+        onSubmit({ ...f, physical_progress_not_applicable: isCapacity && f.physical_progress_not_applicable });
       }}
       className="space-y-8"
     >
@@ -83,7 +84,15 @@ export function ProjectForm({
         </Field>
         <Field label="4a. Date of commencement"><Input {...date("start_date")} /></Field>
         <Field label="4b. Proposed / completed date"><Input {...date("end_date")} /></Field>
-        <Field label="6. Physical work completed (%)"><Input type="number" min={0} max={100} value={String(f.physical_progress)} onChange={(e) => set("physical_progress", Math.min(100, Math.max(0, Number(e.target.value || 0))))} /></Field>
+        <Field label="6. Physical work completed (%)">
+          {isCapacity && (
+            <select aria-label="Physical work applicability" className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm" value={f.physical_progress_not_applicable ? "not_applicable" : "applicable"} onChange={(e) => set("physical_progress_not_applicable", e.target.value === "not_applicable")}>
+              <option value="applicable">Applicable (%)</option>
+              <option value="not_applicable">Not applicable</option>
+            </select>
+          )}
+          {!(isCapacity && f.physical_progress_not_applicable) && <Input aria-label="Physical work completed (%)" type="number" min={0} max={100} value={String(f.physical_progress)} onChange={(e) => set("physical_progress", Math.min(100, Math.max(0, Number(e.target.value || 0))))} />}
+        </Field>
         <Field label="5. Progress notes" full><Textarea rows={2} {...txt("progress_notes")} /></Field>
         <Field label="7. Key activities / milestones completed" full><Textarea rows={3} {...txt("milestones_completed")} /></Field>
         <Field label="8. Activities / milestones pending" full><Textarea rows={3} {...txt("milestones_pending")} /></Field>

@@ -30,6 +30,7 @@ export type Database = {
           other_info: string | null
           participants: number | null
           physical_progress: number
+          physical_progress_not_applicable: boolean
           progress_notes: string | null
           project_head: string | null
           start_date: string | null
@@ -56,6 +57,7 @@ export type Database = {
           other_info?: string | null
           participants?: number | null
           physical_progress?: number
+          physical_progress_not_applicable?: boolean
           progress_notes?: string | null
           project_head?: string | null
           start_date?: string | null
@@ -82,6 +84,7 @@ export type Database = {
           other_info?: string | null
           participants?: number | null
           physical_progress?: number
+          physical_progress_not_applicable?: boolean
           progress_notes?: string | null
           project_head?: string | null
           start_date?: string | null

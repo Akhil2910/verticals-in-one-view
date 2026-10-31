@@ -1,0 +1,2 @@
+ALTER TABLE public.projects ADD COLUMN physical_progress_not_applicable boolean NOT NULL DEFAULT false;
+COMMENT ON COLUMN public.projects.physical_progress_not_applicable IS 'Marks physical work completed as not applicable for Training & Capacity Building projects; physical_progress retains its numeric value.';
