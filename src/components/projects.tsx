@@ -129,6 +129,7 @@ export function ProjectDetail({ p, verticalName }: { p: Project; verticalName: s
   const rows: [string, React.ReactNode][] = [
     ["1. Name of the Project / Programme", p.name],
     ["2. Name of the Vertical", verticalName],
+    ...(/capacity/i.test(verticalName) ? [["Number of participants", p.participants == null ? "—" : String(p.participants)] as [string, React.ReactNode]] : []),
     ["3. Project Head / Team Members", <>{p.project_head ?? "—"}{p.team_members ? <div className="text-muted-foreground">{p.team_members}</div> : null}</>],
     ["4. Commencement / Proposed or completed date", `${fmtDate(p.start_date)} → ${fmtDate(p.end_date)}`],
     ["5. Current status / progress", <><StatusBadge s={p.status} />{p.progress_notes ? <div className="mt-1 whitespace-pre-wrap">{p.progress_notes}</div> : null}</>],

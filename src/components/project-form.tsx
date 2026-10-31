@@ -27,6 +27,7 @@ const empty: ProjectInput = {
   expected_completion: null,
   issues: "",
   other_info: "",
+  participants: null,
 };
 
 export function ProjectForm({
@@ -44,6 +45,7 @@ export function ProjectForm({
 }) {
   const [f, setF] = useState<ProjectInput>({ ...empty, ...initial, vertical_id: lockedVertical ?? initial?.vertical_id ?? "" });
   const set = <K extends keyof ProjectInput>(k: K, v: ProjectInput[K]) => setF((s) => ({ ...s, [k]: v }));
+  const isCapacity = /capacity/i.test(verticals.find((v) => v.id === f.vertical_id)?.name ?? "");
   const txt = (k: keyof ProjectInput) => ({ value: (f[k] as string) ?? "", onChange: (e: { target: { value: string } }) => set(k, e.target.value as never) });
   const date = (k: keyof ProjectInput) => ({ type: "date", value: (f[k] as string) ?? "", onChange: (e: { target: { value: string } }) => set(k, (e.target.value || null) as never) });
   const num = (k: keyof ProjectInput) => ({ type: "number", min: 0, step: "0.01", value: String(f[k] ?? 0), onChange: (e: { target: { value: string } }) => set(k, Number(e.target.value || 0) as never) });
@@ -64,6 +66,11 @@ export function ProjectForm({
             {verticals.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
           </select>
         </Field>
+        {isCapacity && (
+          <Field label="Number of participants">
+            <Input type="number" min={0} step="1" value={f.participants == null ? "" : String(f.participants)} onChange={(e) => set("participants", e.target.value === "" ? null : Math.max(0, Math.floor(Number(e.target.value))))} />
+          </Field>
+        )}
         <Field label="3a. Project Head"><Input {...txt("project_head")} /></Field>
         <Field label="3b. Team Members" full><Textarea rows={2} {...txt("team_members")} /></Field>
       </Section>
