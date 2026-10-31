@@ -28,6 +28,7 @@ export type Database = {
           milestones_pending: string | null
           name: string
           other_info: string | null
+          participants: number | null
           physical_progress: number
           progress_notes: string | null
           project_head: string | null
@@ -53,6 +54,7 @@ export type Database = {
           milestones_pending?: string | null
           name: string
           other_info?: string | null
+          participants?: number | null
           physical_progress?: number
           progress_notes?: string | null
           project_head?: string | null
@@ -78,6 +80,7 @@ export type Database = {
           milestones_pending?: string | null
           name?: string
           other_info?: string | null
+          participants?: number | null
           physical_progress?: number
           progress_notes?: string | null
           project_head?: string | null
