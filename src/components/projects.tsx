@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { fmtDate, inr, yetToReceive, type Project, type Vertical } from "@/lib/data";
+import { fmtDate, inr, yetToReceive, progressNotApplicable, type Project, type Vertical } from "@/lib/data";
 
 export const STATUSES = ["Ongoing", "Completed", "On hold"] as const;
 
@@ -111,7 +111,7 @@ export function ProjectsTable({
                 <td className="px-3 py-2">{p.project_head ?? "—"}</td>
                 <td className="px-3 py-2"><StatusBadge s={p.status} /></td>
                 <td className="px-3 py-2">
-                  <div className="flex items-center gap-2"><Progress value={Number(p.physical_progress)} className="h-2" /><span className="text-xs">{Number(p.physical_progress)}%</span></div>
+                  {progressNotApplicable(p, vName(p.vertical_id)) ? <span className="text-xs text-muted-foreground">Not applicable</span> : <div className="flex items-center gap-2"><Progress value={Number(p.physical_progress)} className="h-2" /><span className="text-xs">{Number(p.physical_progress)}%</span></div>}
                 </td>
                 <td className="px-3 py-2 text-right">{inr(p.total_cost)}</td>
                 <td className="px-3 py-2 text-right">{inr(yetToReceive(p))}</td>
@@ -133,7 +133,7 @@ export function ProjectDetail({ p, verticalName }: { p: Project; verticalName: s
     ["3. Project Head / Team Members", <>{p.project_head ?? "—"}{p.team_members ? <div className="text-muted-foreground">{p.team_members}</div> : null}</>],
     ["4. Commencement / Proposed or completed date", `${fmtDate(p.start_date)} → ${fmtDate(p.end_date)}`],
     ["5. Current status / progress", <><StatusBadge s={p.status} />{p.progress_notes ? <div className="mt-1 whitespace-pre-wrap">{p.progress_notes}</div> : null}</>],
-    ["6. Physical work completed", `${Number(p.physical_progress)}%`],
+    ["6. Physical work completed", progressNotApplicable(p, verticalName) ? "Not applicable" : `${Number(p.physical_progress)}%`],
     ["7. Key activities / milestones completed", p.milestones_completed],
     ["8. Activities / milestones pending", p.milestones_pending],
     ["9. Total Project Cost / Sanctioned Amount", inr(p.total_cost)],

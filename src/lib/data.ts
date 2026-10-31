@@ -67,5 +67,10 @@ export const yetToReceive = (p: Pick<Project, "total_cost" | "amount_received">)
 
 export const fmtDate = (d: string | null) => (d ? new Date(d).toLocaleDateString("en-IN") : "—");
 
+export const isCapacityBuilding = (name: string) => name === "Training & Capacity Building";
+
+export const progressNotApplicable = (p: Pick<Project, "physical_progress_not_applicable">, verticalName: string) =>
+  isCapacityBuilding(verticalName) && p.physical_progress_not_applicable;
+
 export const homeFor = (role: Role | null) =>
   role === "admin" ? "/app/dashboard" : role === "official" ? "/app/dashboard" : role === "vertical_head" ? "/app/vertical" : "/";
