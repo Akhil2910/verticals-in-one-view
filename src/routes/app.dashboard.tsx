@@ -1,7 +1,9 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { DateRangeFilter } from "@/components/date-range-filter";
+import { useState } from "react";
 import { ProjectsTable, Stats } from "@/components/projects";
-import { inr, projectsQuery, verticalsQuery, yetToReceive } from "@/lib/data";
+import { inDateRange, inr, projectsQuery, verticalsQuery, yetToReceive } from "@/lib/data";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard · NIUM Project Records" }] }),
@@ -14,7 +16,9 @@ export const Route = createFileRoute("/app/dashboard")({
 });
 
 function Dashboard() {
-  const { data: projects } = useSuspenseQuery(projectsQuery);
+  const { data: all } = useSuspenseQuery(projectsQuery);
+  const [range, setRange] = useState({ from: "", to: "" });
+  const projects = all.filter((p) => inDateRange(p, range.from, range.to));
   const { data: verticals } = useSuspenseQuery(verticalsQuery);
   const navigate = useNavigate();
   return (
@@ -23,6 +27,7 @@ function Dashboard() {
         <h1 className="text-3xl font-bold">All verticals</h1>
         <p className="text-muted-foreground">Overview of every project and programme across NIUM.</p>
       </div>
+      <DateRangeFilter from={range.from} to={range.to} onChange={(from, to) => setRange({ from, to })} />
       <Stats projects={projects} />
       <section>
         <h2 className="mb-1 text-xl font-semibold">By vertical</h2>

@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { DateRangeFilter } from "@/components/date-range-filter";
+import { useState } from "react";
 import { ProjectsTable, Stats } from "@/components/projects";
 import { Button } from "@/components/ui/button";
-import { projectsQuery, verticalsQuery } from "@/lib/data";
+import { inDateRange, projectsQuery, verticalsQuery } from "@/lib/data";
 
 export const Route = createFileRoute("/app/vertical")({
   head: () => ({ meta: [{ title: "My Projects · NIUM Project Records" }] }),
@@ -15,7 +17,8 @@ function MyVertical() {
   const { me } = Route.useRouteContext();
   const { data: projects } = useSuspenseQuery(projectsQuery);
   const { data: verticals } = useSuspenseQuery(verticalsQuery);
-  const mine = projects.filter((p) => p.vertical_id === me.verticalId);
+  const [range, setRange] = useState({ from: "", to: "" });
+  const mine = projects.filter((p) => p.vertical_id === me.verticalId && inDateRange(p, range.from, range.to));
   const vName = verticals.find((v) => v.id === me.verticalId)?.name ?? "No vertical assigned";
   return (
     <div className="space-y-8">
@@ -26,6 +29,7 @@ function MyVertical() {
         </div>
         {me.verticalId && <Button asChild><Link to="/app/projects/new">+ Add project</Link></Button>}
       </div>
+      <DateRangeFilter from={range.from} to={range.to} onChange={(from, to) => setRange({ from, to })} />
       <Stats projects={mine} />
       <ProjectsTable projects={mine} verticals={verticals} showVertical={false} />
     </div>
