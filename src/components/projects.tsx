@@ -26,7 +26,7 @@ export function Stats({ projects }: { projects: Project[] }) {
     ["Projects", String(projects.length)],
     ["Ongoing", String(projects.filter((p) => p.status === "Ongoing").length)],
     ["Completed", String(projects.filter((p) => p.status === "Completed").length)],
-    ["Sanctioned", inr(t.cost)],
+    ["Total Project Cost", inr(t.cost)],
     ["Received", inr(t.rec)],
     ["Yet to receive", inr(t.pend)],
     ["Expenditure", inr(t.exp)],
@@ -93,7 +93,7 @@ export function ProjectsTable({
               <th className="px-3 py-2">Head</th>
               <th className="px-3 py-2">Status</th>
               <th className="px-3 py-2 w-36">Progress</th>
-              <th className="px-3 py-2 text-right">Sanctioned</th>
+              <th className="px-3 py-2 text-right">Total Project Cost</th>
               <th className="px-3 py-2 text-right">Yet to receive</th>
               <th className="px-3 py-2">Updated</th>
             </tr>

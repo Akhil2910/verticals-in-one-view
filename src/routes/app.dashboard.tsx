@@ -30,7 +30,7 @@ function Dashboard() {
         <div className="overflow-x-auto rounded-lg border bg-card shadow-sm">
           <table className="w-full text-sm">
             <thead className="bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
-              <tr><th className="px-3 py-2">Vertical</th><th className="px-3 py-2 text-right">Projects</th><th className="px-3 py-2 text-right">Ongoing</th><th className="px-3 py-2 text-right">Completed</th><th className="px-3 py-2 text-right">Sanctioned</th><th className="px-3 py-2 text-right">Received</th><th className="px-3 py-2 text-right">Yet to receive</th></tr>
+              <tr><th className="px-3 py-2">Vertical</th><th className="px-3 py-2 text-right">Projects</th><th className="px-3 py-2 text-right">Ongoing</th><th className="px-3 py-2 text-right">Completed</th><th className="px-3 py-2 text-right">Total Project Cost</th><th className="px-3 py-2 text-right">Received</th><th className="px-3 py-2 text-right">Yet to receive</th></tr>
             </thead>
             <tbody>
               {verticals.map((v) => {
