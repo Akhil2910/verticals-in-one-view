@@ -74,3 +74,12 @@ export const progressNotApplicable = (p: Pick<Project, "physical_progress_not_ap
 
 export const homeFor = (role: Role | null) =>
   role === "admin" ? "/app/dashboard" : role === "official" ? "/app/dashboard" : role === "vertical_head" ? "/app/vertical" : "/";
+
+/** Project period (commencement → proposed/completed date) overlaps the selected from–to range. */
+export const inDateRange = (p: Pick<Project, "start_date" | "end_date">, from: string, to: string) => {
+  if (!from && !to) return true;
+  const start = p.start_date ?? p.end_date;
+  const end = p.end_date ?? p.start_date;
+  if (!start || !end) return false;
+  return (!to || start <= to) && (!from || end >= from);
+};

@@ -19,3 +19,12 @@ describe("physical progress applicability", () => {
     expect(progressNotApplicable({ physical_progress_not_applicable: true }, "Research & Development")).toBe(false);
   });
 });
+
+import { inDateRange as idr } from "./data";
+describe("inDateRange", () => {
+  const p = { start_date: "2026-01-10", end_date: "2026-03-31" };
+  it("no filter shows all", () => expect(idr({ start_date: null, end_date: null }, "", "")).toBe(true));
+  it("overlapping period included", () => expect(idr(p, "2026-03-01", "2026-04-30")).toBe(true));
+  it("period after range excluded", () => expect(idr(p, "2025-01-01", "2025-12-31")).toBe(false));
+  it("undated project excluded when filtering", () => expect(idr({ start_date: null, end_date: null }, "2026-01-01", "")).toBe(false));
+});
