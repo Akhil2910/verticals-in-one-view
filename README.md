@@ -16,11 +16,19 @@ Continue developing this project in the [Lovable editor](https://lovable.dev/pro
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Needs Node.js 22. No Docker needed: a throwaway local Postgres runs from npm.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+npm install
+npm run db:local                 # terminal 1: local Postgres on port 54329 (data in .pgdata/)
+cp .env.example .env.local       # terminal 2
+export DATABASE_URL=postgres://postgres:postgres@localhost:54329/nium
+npm run db:migrate
+npm run dev                      # then open /setup to create the first admin
 ```
+
+`npm run build && npm start` runs the production build (`.output/server/index.mjs`, port 3000).
+
+## Deploying
+
+The app runs on AWS (EC2 + RDS PostgreSQL + CloudFront). See [infra/aws/README.md](infra/aws/README.md), which also covers moving the existing data out of Supabase.

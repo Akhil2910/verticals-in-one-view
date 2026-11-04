@@ -1,13 +1,12 @@
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { signIn, signOut } from "@/lib/api.functions";
 import { fetchMe, homeFor } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import logoAsset from "@/assets/nium-logo.png.asset.json";
-const logo = logoAsset.url;
+const logo = "/nium-logo.png";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -38,26 +37,27 @@ function SignIn() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
+    try {
+      await signIn({ data: { email, password } });
+    } catch (err) {
       setBusy(false);
-      toast.error(error.message);
+      toast.error((err as Error).message);
       return;
     }
     const me = await fetchMe();
     setBusy(false);
     if (!me?.role) {
       toast.error("Your account has no role assigned. Contact the IT admin.");
-      await supabase.auth.signOut();
+      await signOut();
       return;
     }
-    navigate({ to: homeFor(me.role), replace: true });
+    navigate({ to: me.mustChangePassword ? "/app/account" : homeFor(me.role), replace: true });
   }
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="hidden flex-col justify-between bg-sidebar p-12 text-sidebar-foreground lg:flex">
-        <div className="flex items-center gap-4"><div className="rounded-lg bg-card p-2"><img src={logo} alt="NIUM logo" width={72} height={72} className="h-18 w-18 object-contain" /></div><div className="font-serif text-xl font-bold">National Institute of Urban Management</div></div>
+        <div className="w-72 rounded-xl bg-card px-5 py-3"><img src={logo} alt="National Institute of Urban Management" width={433} height={116} className="h-auto w-full" /></div>
         <div>
           <h1 className="text-4xl font-bold leading-tight">Project &amp; Programme Records</h1>
           <p className="mt-4 max-w-md text-sidebar-foreground/80">
@@ -69,7 +69,7 @@ function SignIn() {
       <div className="flex items-center justify-center p-6">
         <form onSubmit={submit} className="w-full max-w-sm space-y-5">
           <div>
-            <img src={logo} alt="NIUM logo" width={80} height={80} className="mb-4 h-20 w-20 object-contain lg:hidden" />
+            <img src={logo} alt="National Institute of Urban Management" width={433} height={116} className="mb-6 h-auto w-56 lg:hidden" />
             <h2 className="text-2xl font-semibold">Sign in</h2>
             <p className="text-sm text-muted-foreground">Use the login given to you by the IT admin.</p>
           </div>

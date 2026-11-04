@@ -30,3 +30,23 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local secrets (DATABASE_URL etc.)
+.env
+.env.*
+!.env.example
+
+# Local Postgres used for development
+.pgdata/
+
+# Temporary passwords written by the Supabase import
+import-output/
+
+# Data exported from the old Supabase database (real people and projects)
+supabase-export/
+*.backup
+*.backup.zip
+
+# Data exports (password hashes, documents): never commit
+nium-data*.json
+*.nium-data.json

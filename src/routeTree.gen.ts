@@ -12,9 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as SetupRouteImport } from './routes/setup'
+import { Route as AppAccountRouteImport } from './routes/app.account'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppReportRouteImport } from './routes/app.report'
 import { Route as AppVerticalRouteImport } from './routes/app.vertical'
+import { Route as ApiFilesIdRouteImport } from './routes/api.files.$id'
 import { Route as AppAdminUsersRouteImport } from './routes/app.admin.users'
 import { Route as AppAdminVerticalsRouteImport } from './routes/app.admin.verticals'
 import { Route as AppProjectsNewRouteImport } from './routes/app.projects.new'
@@ -37,6 +39,11 @@ const SetupRoute = SetupRouteImport.update({
   path: '/setup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppAccountRoute = AppAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -51,6 +58,11 @@ const AppVerticalRoute = AppVerticalRouteImport.update({
   id: '/vertical',
   path: '/vertical',
   getParentRoute: () => AppRoute,
+} as any)
+const ApiFilesIdRoute = ApiFilesIdRouteImport.update({
+  id: '/api/files/$id',
+  path: '/api/files/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppAdminUsersRoute = AppAdminUsersRouteImport.update({
   id: '/admin/users',
@@ -87,9 +99,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/setup': typeof SetupRoute
+  '/app/account': typeof AppAccountRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/report': typeof AppReportRoute
   '/app/vertical': typeof AppVerticalRoute
+  '/api/files/$id': typeof ApiFilesIdRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/verticals': typeof AppAdminVerticalsRoute
   '/app/projects/new': typeof AppProjectsNewRoute
@@ -101,9 +115,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/setup': typeof SetupRoute
+  '/app/account': typeof AppAccountRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/report': typeof AppReportRoute
   '/app/vertical': typeof AppVerticalRoute
+  '/api/files/$id': typeof ApiFilesIdRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/verticals': typeof AppAdminVerticalsRoute
   '/app/projects/new': typeof AppProjectsNewRoute
@@ -116,9 +132,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/setup': typeof SetupRoute
+  '/app/account': typeof AppAccountRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/report': typeof AppReportRoute
   '/app/vertical': typeof AppVerticalRoute
+  '/api/files/$id': typeof ApiFilesIdRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/verticals': typeof AppAdminVerticalsRoute
   '/app/projects/new': typeof AppProjectsNewRoute
@@ -132,9 +150,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/setup'
+    | '/app/account'
     | '/app/dashboard'
     | '/app/report'
     | '/app/vertical'
+    | '/api/files/$id'
     | '/app/admin/users'
     | '/app/admin/verticals'
     | '/app/projects/new'
@@ -146,9 +166,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/setup'
+    | '/app/account'
     | '/app/dashboard'
     | '/app/report'
     | '/app/vertical'
+    | '/api/files/$id'
     | '/app/admin/users'
     | '/app/admin/verticals'
     | '/app/projects/new'
@@ -160,9 +182,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/setup'
+    | '/app/account'
     | '/app/dashboard'
     | '/app/report'
     | '/app/vertical'
+    | '/api/files/$id'
     | '/app/admin/users'
     | '/app/admin/verticals'
     | '/app/projects/new'
@@ -175,6 +199,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   SetupRoute: typeof SetupRoute
+  ApiFilesIdRoute: typeof ApiFilesIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -200,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SetupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/account': {
+      id: '/app/account'
+      path: '/account'
+      fullPath: '/app/account'
+      preLoaderRoute: typeof AppAccountRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/dashboard': {
       id: '/app/dashboard'
       path: '/dashboard'
@@ -220,6 +252,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/vertical'
       preLoaderRoute: typeof AppVerticalRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/api/files/$id': {
+      id: '/api/files/$id'
+      path: '/api/files/$id'
+      fullPath: '/api/files/$id'
+      preLoaderRoute: typeof ApiFilesIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/app/admin/users': {
       id: '/app/admin/users'
@@ -267,6 +306,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppAccountRoute: typeof AppAccountRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppReportRoute: typeof AppReportRoute
   AppVerticalRoute: typeof AppVerticalRoute
@@ -279,6 +319,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAccountRoute: AppAccountRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppReportRoute: AppReportRoute,
   AppVerticalRoute: AppVerticalRoute,
@@ -296,6 +337,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   SetupRoute: SetupRoute,
+  ApiFilesIdRoute: ApiFilesIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

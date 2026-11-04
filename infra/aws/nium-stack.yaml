@@ -1,0 +1,336 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  NIUM Project Records: Node app on EC2, Postgres on RDS, HTTPS through CloudFront.
+  Deploy with infra/aws/deploy.sh (see infra/aws/README.md).
+
+Parameters:
+  RepoUrl:
+    Type: String
+    Default: https://github.com/Akhil2910/verticals-in-one-view.git
+    Description: Git repository the server builds from (must be readable without credentials).
+  Branch:
+    Type: String
+    Default: main
+  InstanceType:
+    Type: String
+    Default: t4g.small
+    AllowedValues: [t4g.small, t4g.medium, t4g.large]
+  DBInstanceClass:
+    Type: String
+    Default: db.t4g.micro
+    AllowedValues: [db.t4g.micro, db.t4g.small, db.t4g.medium]
+  DBAllocatedStorage:
+    Type: Number
+    Default: 20
+    MinValue: 20
+  CloudFrontPrefixListId:
+    Type: String
+    Description: Id of the com.amazonaws.global.cloudfront.origin-facing managed prefix list in this region (deploy.sh looks it up).
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64
+
+Conditions:
+  IsUsEast1: !Equals [!Ref AWS::Region, us-east-1]
+
+Resources:
+  # ---------- Network: 2 public subnets (app), 2 private subnets (database) ----------
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.40.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags: [{ Key: Name, Value: nium-records }]
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+  GatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties: { VpcId: !Ref Vpc, InternetGatewayId: !Ref InternetGateway }
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.40.0.0/24
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      MapPublicIpOnLaunch: true
+  PublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.40.1.0/24
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      MapPublicIpOnLaunch: true
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.40.10.0/24
+      AvailabilityZone: !Select [0, !GetAZs ""]
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.40.11.0/24
+      AvailabilityZone: !Select [1, !GetAZs ""]
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties: { VpcId: !Ref Vpc }
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: GatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PublicSubnetARoutes:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: { SubnetId: !Ref PublicSubnetA, RouteTableId: !Ref PublicRouteTable }
+  PublicSubnetBRoutes:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: { SubnetId: !Ref PublicSubnetB, RouteTableId: !Ref PublicRouteTable }
+
+  # ---------- Security groups ----------
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: App server - port 3000 from CloudFront only. No SSH; use SSM Session Manager.
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          SourcePrefixListId: !Ref CloudFrontPrefixListId
+  DbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Postgres - from the app server only.
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref AppSecurityGroup
+
+  # ---------- Database ----------
+  # Our own secret (not RDS-managed) so the password is not rotated under the running app.
+  DbSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: NIUM records database login
+      GenerateSecretString:
+        SecretStringTemplate: '{"username":"nium_admin"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'' :?#[]%'
+  DbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Private subnets for the NIUM database
+      SubnetIds: [!Ref PrivateSubnetA, !Ref PrivateSubnetB]
+  Database:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      Engine: postgres
+      EngineVersion: "16"
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: !Ref DBAllocatedStorage
+      StorageType: gp3
+      StorageEncrypted: true
+      DBName: nium
+      MasterUsername: nium_admin
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${DbSecret}:SecretString:password}}"
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      VPCSecurityGroups: [!Ref DbSecurityGroup]
+      PubliclyAccessible: false
+      MultiAZ: false
+      BackupRetentionPeriod: 7
+      DeletionProtection: true
+      AutoMinorVersionUpgrade: true
+      CopyTagsToSnapshot: true
+
+  # ---------- App server ----------
+  AppRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ec2.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Policies:
+        - PolicyName: read-db-secret
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource: !Ref DbSecret
+  AppInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: { Roles: [!Ref AppRole] }
+
+  AppServer:
+    Type: AWS::EC2::Instance
+    DependsOn: [PublicRoute, Database]
+    CreationPolicy:
+      ResourceSignal: { Timeout: PT25M }
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: !Ref InstanceType
+      SubnetId: !Ref PublicSubnetA
+      SecurityGroupIds: [!Ref AppSecurityGroup]
+      IamInstanceProfile: !Ref AppInstanceProfile
+      MetadataOptions: { HttpTokens: required }
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs: { VolumeSize: 20, VolumeType: gp3, Encrypted: true }
+      Tags: [{ Key: Name, Value: nium-records-app }]
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -euxo pipefail
+          trap '/opt/aws/bin/cfn-signal -e 1 --stack ${AWS::StackName} --resource AppServer --region ${AWS::Region}' ERR
+
+          dnf install -y git tar xz aws-cfn-bootstrap
+
+          # 1 GB swap so the build has headroom on a 2 GB instance.
+          fallocate -l 1G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+          echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+          # Node.js 22 from nodejs.org, checksum-verified.
+          cd /tmp
+          DIST=https://nodejs.org/dist/latest-v22.x
+          curl -fsSLO "$DIST/SHASUMS256.txt"
+          TARBALL=$(grep -o 'node-v[0-9.]*-linux-arm64.tar.xz' SHASUMS256.txt | head -1)
+          curl -fsSLO "$DIST/$TARBALL"
+          grep " $TARBALL\$" SHASUMS256.txt | sha256sum -c -
+          tar -xJf "$TARBALL" -C /usr/local --strip-components=1
+
+          useradd --system --create-home --home-dir /opt/nium --shell /bin/bash nium
+
+          cat > /etc/nium.env <<'ENV'
+          NODE_ENV=production
+          PORT=3000
+          HOST=0.0.0.0
+          AWS_REGION=${AWS::Region}
+          DB_SECRET_ARN=${DbSecret}
+          DB_HOST=${Database.Endpoint.Address}
+          DB_PORT=${Database.Endpoint.Port}
+          DB_NAME=nium
+          REPO_URL=${RepoUrl}
+          BRANCH=${Branch}
+          ENV
+          chmod 640 /etc/nium.env && chgrp nium /etc/nium.env
+
+          # Fetch (or update) the code and build it. Runs as the nium user.
+          cat > /opt/nium/deploy.sh <<'SH'
+          #!/bin/bash
+          set -euo pipefail
+          set -a; . /etc/nium.env; set +a
+          cd /opt/nium
+          [ -d app/.git ] || git clone --branch "$BRANCH" "$REPO_URL" app
+          cd app
+          git fetch origin "$BRANCH"
+          git reset --hard "origin/$BRANCH"
+          npm ci --no-audit --no-fund
+          npm run build
+          SH
+
+          # Applies migrations, then starts the server (with-db.sh supplies DATABASE_URL).
+          cat > /opt/nium/start.sh <<'SH'
+          #!/bin/bash
+          set -euo pipefail
+          cd /opt/nium/app
+          exec infra/aws/with-db.sh sh -c 'node scripts/migrate.mjs && exec node .output/server/index.mjs'
+          SH
+          chmod 755 /opt/nium/deploy.sh /opt/nium/start.sh
+          chown -R nium:nium /opt/nium
+
+          cat > /etc/systemd/system/nium.service <<'UNIT'
+          [Unit]
+          Description=NIUM Project Records
+          After=network-online.target
+          Wants=network-online.target
+
+          [Service]
+          User=nium
+          EnvironmentFile=/etc/nium.env
+          ExecStart=/opt/nium/start.sh
+          Restart=always
+          RestartSec=5
+          NoNewPrivileges=true
+          ProtectSystem=full
+
+          [Install]
+          WantedBy=multi-user.target
+          UNIT
+
+          sudo -u nium /opt/nium/deploy.sh
+          systemctl daemon-reload
+          systemctl enable --now nium
+
+          # Wait until the app answers before reporting success to CloudFormation.
+          for i in $(seq 1 60); do curl -fsS -o /dev/null http://127.0.0.1:3000/ && break; sleep 5; done
+          curl -fsS -o /dev/null http://127.0.0.1:3000/
+          /opt/aws/bin/cfn-signal -e 0 --stack ${AWS::StackName} --resource AppServer --region ${AWS::Region}
+
+  AppIp:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref AppServer
+
+  # ---------- HTTPS in front: CloudFront ----------
+  Cdn:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: NIUM Project Records
+        HttpVersion: http2and3
+        PriceClass: PriceClass_200
+        Origins:
+          - Id: app
+            # The Elastic IP's public DNS name, which stays the same across instance restarts.
+            DomainName: !Join
+              - ""
+              - - "ec2-"
+                - !Join ["-", !Split [".", !Ref AppIp]]
+                - !If [IsUsEast1, ".compute-1.amazonaws.com", !Sub ".${AWS::Region}.compute.amazonaws.com"]
+            CustomOriginConfig:
+              HTTPPort: 3000
+              OriginProtocolPolicy: http-only
+              OriginReadTimeout: 60
+        DefaultCacheBehavior:
+          TargetOriginId: app
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE]
+          CachedMethods: [GET, HEAD]
+          Compress: true
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # Managed-CachingDisabled
+          OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac # Managed-AllViewerExceptHostHeader
+        CacheBehaviors:
+          # Build output has content-hashed names, so it can be cached at the edge.
+          - PathPattern: /assets/*
+            TargetOriginId: app
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods: [GET, HEAD]
+            Compress: true
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+
+Outputs:
+  AppUrl:
+    Description: Open this to use the app (first visit /setup to create the admin, unless you imported data).
+    Value: !Sub "https://${Cdn.DomainName}"
+  InstanceId:
+    Value: !Ref AppServer
+  DatabaseEndpoint:
+    Value: !GetAtt Database.Endpoint.Address
+  DbSecretArn:
+    Value: !Ref DbSecret

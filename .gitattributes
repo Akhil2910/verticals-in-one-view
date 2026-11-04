@@ -1,0 +1,2 @@
+# Shell scripts run on Linux (AWS server, CloudShell): never check them out with CRLF.
+*.sh text eol=lf

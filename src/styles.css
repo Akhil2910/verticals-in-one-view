@@ -43,6 +43,13 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
+  --color-brand: var(--brand);
+  --color-ongoing: var(--ongoing);
+  --color-completed: var(--completed);
+  --color-onhold: var(--onhold);
+  --color-received: var(--received);
+  --color-due: var(--due);
+  --color-spent: var(--spent);
   --font-serif: "Source Serif 4", Georgia, serif;
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
   --color-border: var(--border);
@@ -66,38 +73,49 @@
 
 :root {
   --radius: 0.375rem;
-  --background: oklch(0.985 0.004 85);
-  --foreground: oklch(0.22 0.04 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.04 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.04 260);
-  --primary: oklch(0.32 0.09 262);
-  --primary-foreground: oklch(0.98 0.005 85);
-  --secondary: oklch(0.95 0.01 85);
-  --secondary-foreground: oklch(0.28 0.06 262);
-  --muted: oklch(0.955 0.008 85);
-  --muted-foreground: oklch(0.5 0.03 260);
+  /* Cool, neutral page with white cards; NIUM navy for structure, blue for anything interactive. */
+  --background: #f4f6f9;
+  --foreground: #0f1b2d;
+  --card: #ffffff;
+  --card-foreground: #0f1b2d;
+  --popover: #ffffff;
+  --popover-foreground: #0f1b2d;
+  --primary: #1b3561;
+  --primary-foreground: #ffffff;
+  --secondary: #eef2f7;
+  --secondary-foreground: #1b3561;
+  --muted: #eef1f5;
+  --muted-foreground: #5b6575;
+  /* Readable blue for small labels, links and eyebrows (saffron is too light for text on white). */
+  --brand: #256abf;
   --accent: oklch(0.74 0.16 60);
   --accent-foreground: oklch(0.22 0.04 260);
   --destructive: oklch(0.55 0.2 27);
   --destructive-foreground: oklch(0.98 0 0);
   --success: oklch(0.55 0.13 150);
-  --border: oklch(0.89 0.012 85);
-  --input: oklch(0.89 0.012 85);
-  --ring: oklch(0.32 0.09 262);
+  /* Status and money colours from the validated dataviz palette (colour-blind safe as sets;
+     checked with the dataviz skill's validate_palette.js). Text never uses them - only marks, dots and icons. */
+  --ongoing: #2a78d6;
+  --completed: #1baf7a;
+  --onhold: #eb6834;
+  --received: #008300;
+  --due: #eda100;
+  --spent: #6250d6;
+  --border: #e1e6ed;
+  --input: #d5dce6;
+  --ring: #2a78d6;
   --chart-1: oklch(0.32 0.09 262);
   --chart-2: oklch(0.74 0.16 60);
   --chart-3: oklch(0.55 0.13 150);
   --chart-4: oklch(0.6 0.1 230);
   --chart-5: oklch(0.55 0.2 27);
-  --sidebar: oklch(0.28 0.08 262);
-  --sidebar-foreground: oklch(0.95 0.01 85);
-  --sidebar-primary: oklch(0.74 0.16 60);
-  --sidebar-primary-foreground: oklch(0.22 0.04 260);
-  --sidebar-accent: oklch(0.34 0.08 262);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.36 0.07 262);
+  --sidebar: #14284a;
+  --sidebar-foreground: #e8edf5;
+  --sidebar-primary: #f2a33a;
+  --sidebar-primary-foreground: #14284a;
+  --sidebar-accent: #1f3a66;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #24406e;
   --sidebar-ring: oklch(0.74 0.16 60);
 }
 
@@ -117,8 +135,15 @@
   h1, h2, h3 { font-family: var(--font-serif); }
 }
 
+@page {
+  size: A4;
+  margin: 14mm 12mm;
+}
+
 @media print {
   .no-print { display: none !important; }
   body { background: white; }
   .print-break { break-inside: avoid; }
+  /* Keep status colours and bars on paper (browsers drop backgrounds by default). */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }

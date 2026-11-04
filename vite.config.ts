@@ -12,4 +12,6 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Self-hosted on AWS: build a plain Node server (.output/server/index.mjs) instead of the Cloudflare default.
+  nitro: { preset: "node-server" },
 });

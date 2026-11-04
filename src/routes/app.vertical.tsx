@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { DateRangeFilter } from "@/components/date-range-filter";
 import { useState } from "react";
-import { ProjectsTable, Stats } from "@/components/projects";
+import { Plus } from "lucide-react";
+import { DateRangeFilter } from "@/components/date-range-filter";
+import { PageHeader, ProjectsTable, SectionTitle, Stats } from "@/components/projects";
 import { Button } from "@/components/ui/button";
 import { inDateRange, projectsQuery, verticalsQuery } from "@/lib/data";
 
@@ -22,16 +23,15 @@ function MyVertical() {
   const vName = verticals.find((v) => v.id === me.verticalId)?.name ?? "No vertical assigned";
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <div className="text-xs uppercase tracking-[0.2em] text-accent">Vertical</div>
-          <h1 className="text-3xl font-bold">{vName}</h1>
-        </div>
-        {me.verticalId && <Button asChild><Link to="/app/projects/new">+ Add project</Link></Button>}
-      </div>
-      <DateRangeFilter from={range.from} to={range.to} onChange={(from, to) => setRange({ from, to })} />
+      <PageHeader eyebrow="My vertical" title={vName} description="Projects and programmes you record for this vertical.">
+        <DateRangeFilter from={range.from} to={range.to} onChange={(from, to) => setRange({ from, to })} />
+        {me.verticalId && <Button asChild className="h-10"><Link to="/app/projects/new"><Plus className="h-4 w-4" />Add project</Link></Button>}
+      </PageHeader>
       <Stats projects={mine} />
-      <ProjectsTable projects={mine} verticals={verticals} showVertical={false} />
+      <section className="space-y-3">
+        <SectionTitle title="Projects" hint="Click a row to view or edit it." />
+        <ProjectsTable projects={mine} verticals={verticals} showVertical={false} />
+      </section>
     </div>
   );
 }

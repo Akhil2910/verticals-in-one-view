@@ -1,17 +1,19 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { LayoutDashboard, FolderKanban, Layers, Users, FileText, LogOut, Menu, X } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { fetchMe } from "@/lib/data";
-import logoAsset from "@/assets/nium-logo.png.asset.json";
-const logo = logoAsset.url;
+import { LayoutDashboard, FolderKanban, Layers, Users, FileText, KeyRound, LogOut, Menu, X } from "lucide-react";
+import { signOut as endSession } from "@/lib/api.functions";
+import { fetchMe, projectsQuery, verticalsQuery } from "@/lib/data";
+import { verticalStyle } from "@/lib/vertical-style";
+const logo = "/nium-logo.png";
 
 export const Route = createFileRoute("/app")({
   ssr: false,
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const me = await fetchMe();
     if (!me || !me.role) throw redirect({ to: "/" });
+    // Accounts with a temporary password must pick their own before doing anything else.
+    if (me.mustChangePassword && location.pathname !== "/app/account") throw redirect({ to: "/app/account" });
     return { me };
   },
   component: AppLayout,
@@ -19,7 +21,8 @@ export const Route = createFileRoute("/app")({
 
 const linkCls =
   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
-const activeCls = { className: "!bg-sidebar-primary !text-sidebar-primary-foreground shadow-sm" };
+// Current page: lifted background, white text and a thin saffron marker on the left.
+const activeCls = { className: "!bg-white/10 !text-white shadow-[inset_3px_0_0_var(--sidebar-primary)]" };
 
 function AppLayout() {
   const { me } = Route.useRouteContext();
@@ -30,9 +33,15 @@ function AppLayout() {
   async function signOut() {
     await qc.cancelQueries();
     qc.clear();
-    await supabase.auth.signOut();
+    await endSession();
     navigate({ to: "/", replace: true });
   }
+
+  // Officials and admins jump straight to any vertical from the sidebar.
+  const showVerticals = me.role !== "vertical_head";
+  const verticals = useQuery({ ...verticalsQuery, enabled: showVerticals });
+  const projects = useQuery({ ...projectsQuery, enabled: showVerticals });
+  const countFor = (id: string) => projects.data?.filter((p) => p.vertical_id === id).length ?? 0;
 
   const roleLabel = me.role === "admin" ? "Administrator" : me.role === "official" ? "Official (view only)" : "Vertical Head";
   const initials = (me.name ?? "U").split(" ").map((s: string) => s[0]).join("").slice(0, 2).toUpperCase();
@@ -43,6 +52,25 @@ function AppLayout() {
       {me.role !== "vertical_head" && <Link to="/app/dashboard" className={linkCls} activeProps={activeCls}><LayoutDashboard className="h-4 w-4" />Dashboard</Link>}
       {me.role === "vertical_head" && <Link to="/app/vertical" className={linkCls} activeProps={activeCls}><FolderKanban className="h-4 w-4" />My Projects</Link>}
       <Link to="/app/report" className={linkCls} activeProps={activeCls}><FileText className="h-4 w-4" />Reports</Link>
+      <Link to="/app/account" className={linkCls} activeProps={activeCls}><KeyRound className="h-4 w-4" />Change password</Link>
+      {showVerticals && verticals.data && (
+        <>
+          <div className="px-3 pb-1 pt-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/50">Verticals</div>
+          {verticals.data.map((v) => (
+            <Link
+              key={v.id}
+              to="/app/verticals/$id"
+              params={{ id: v.id }}
+              className="flex items-center gap-2 rounded-md px-3 py-1.5 text-[13px] text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              activeProps={{ className: "!bg-sidebar-accent !text-sidebar-accent-foreground" }}
+            >
+              <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: verticalStyle(v, verticals.data).color }} />
+              <span className="min-w-0 flex-1 truncate">{v.name}</span>
+              <span className={`tabular-nums text-[11px] ${countFor(v.id) ? "text-sidebar-primary" : "text-sidebar-foreground/40"}`}>{countFor(v.id)}</span>
+            </Link>
+          ))}
+        </>
+      )}
       {me.role === "admin" && (
         <>
           <div className="px-3 pb-2 pt-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/50">Administration</div>
@@ -54,17 +82,20 @@ function AppLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-background lg:pl-64">
+    <div className="min-h-screen bg-background lg:pl-64 print:bg-white print:pl-0">
       <aside
         className={`no-print fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-sidebar text-sidebar-foreground transition-transform lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <div className="flex items-center gap-3 border-b border-sidebar-border px-5 py-5">
-          <div className="shrink-0 rounded-md bg-card p-1"><img src={logo} alt="NIUM logo" width={44} height={44} className="h-11 w-11 object-contain" /></div>
-          <div>
-            <div className="font-serif text-lg font-bold leading-none">NIUM Records</div>
+        <div className="border-b border-sidebar-border px-4 py-4">
+          <div className="flex items-start gap-2">
+            {/* The logo is a wide wordmark (433×116), so it gets a full-width white plate. */}
+            <div className="flex-1 rounded-lg bg-card px-3 py-2"><img src={logo} alt="National Institute of Urban Management" width={433} height={116} className="h-auto w-full" /></div>
+            <button className="p-1 lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu"><X className="h-5 w-5" /></button>
+          </div>
+          <div className="mt-3 px-1">
+            <div className="font-serif text-base font-bold leading-none">Project Records</div>
             <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-sidebar-primary">Projects &amp; Programmes</div>
           </div>
-          <button className="ml-auto lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu"><X className="h-5 w-5" /></button>
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-5">{nav}</div>
         <div className="border-t border-sidebar-border p-4">
@@ -88,7 +119,7 @@ function AppLayout() {
       </header>
       <div className="no-print h-1 bg-gradient-to-r from-primary via-accent to-primary" />
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-8 print:max-w-none print:p-0">
         <Outlet />
       </main>
     </div>
