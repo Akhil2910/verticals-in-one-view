@@ -13,16 +13,18 @@ import {
 } from "lucide-react";
 import type { Vertical } from "./types";
 
-// The validated 8-slot categorical palette (dataviz skill reference palette), in its fixed order.
-// Adjacent slots stay distinguishable under the common colour-vision deficiencies.
+// 8 categorical colours without yellow or pink (dataviz reference hues plus teal and indigo),
+// in an order checked with the dataviz skill's validate_palette.js: adjacent slots stay
+// distinguishable under the common colour-vision deficiencies, and slots 2, 5 and 7 (Heritage,
+// Training, Urban Informatics, the verticals that share charts most) also pass as a trio.
 export const VERTICAL_COLORS = [
   "#2a78d6", // blue
   "#eb6834", // orange
-  "#1baf7a", // aqua
-  "#eda100", // yellow
-  "#e87ba4", // magenta
-  "#008300", // green
   "#6250d6", // violet
+  "#1baf7a", // aqua
+  "#3b4cc0", // indigo
+  "#008300", // green
+  "#0e9fb8", // teal
   "#e34948", // red
 ];
 

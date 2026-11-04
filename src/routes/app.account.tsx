@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/app/account")({
-  head: () => ({ meta: [{ title: "Change password · NIUM Project Records" }] }),
+  head: () => ({ meta: [{ title: "Change password · Program Monitoring Center" }] }),
   component: Account,
 });
 

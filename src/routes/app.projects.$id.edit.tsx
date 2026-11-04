@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/projects";
 import { projectQuery, verticalsQuery, projectsQuery } from "@/lib/data";
 
 export const Route = createFileRoute("/app/projects/$id/edit")({
-  head: () => ({ meta: [{ title: "Edit project · NIUM Project Records" }] }),
+  head: () => ({ meta: [{ title: "Edit project · Program Monitoring Center" }] }),
   loader: ({ context, params }) =>
     Promise.all([context.queryClient.ensureQueryData(projectQuery(params.id)), context.queryClient.ensureQueryData(verticalsQuery), context.queryClient.ensureQueryData(projectsQuery)]),
   component: EditProject,

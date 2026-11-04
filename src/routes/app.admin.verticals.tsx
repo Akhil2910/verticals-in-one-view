@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { inr, projectsQuery, totals, verticalsQuery, type Project, type Vertical } from "@/lib/data";
 
 export const Route = createFileRoute("/app/admin/verticals")({
-  head: () => ({ meta: [{ title: "Verticals · NIUM Project Records" }] }),
+  head: () => ({ meta: [{ title: "Verticals · Program Monitoring Center" }] }),
   beforeLoad: ({ context }) => {
     if (context.me.role !== "admin") throw redirect({ to: "/app/dashboard" });
   },

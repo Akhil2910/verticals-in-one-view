@@ -10,10 +10,10 @@ export const Route = createFileRoute("/setup")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "First-time setup · NIUM Project Records" },
-      { name: "description", content: "Create the first admin account for the NIUM records portal." },
-      { property: "og:title", content: "First-time setup · NIUM Project Records" },
-      { property: "og:description", content: "Create the first admin account for the NIUM records portal." },
+      { title: "First-time setup · Program Monitoring Center" },
+      { name: "description", content: "Create the first admin account for the NIUM Program Monitoring Center." },
+      { property: "og:title", content: "First-time setup · Program Monitoring Center" },
+      { property: "og:description", content: "Create the first admin account for the NIUM Program Monitoring Center." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

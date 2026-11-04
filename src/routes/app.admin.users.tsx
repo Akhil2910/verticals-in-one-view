@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { verticalsQuery, type Role, type Vertical } from "@/lib/data";
 
 export const Route = createFileRoute("/app/admin/users")({
-  head: () => ({ meta: [{ title: "Users · NIUM Project Records" }] }),
+  head: () => ({ meta: [{ title: "Users · Program Monitoring Center" }] }),
   beforeLoad: ({ context }) => {
     if (context.me.role !== "admin") throw redirect({ to: "/app/dashboard" });
   },

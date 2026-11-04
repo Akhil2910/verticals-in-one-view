@@ -12,10 +12,10 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Sign in · NIUM Project Records" },
-      { name: "description", content: "Sign in to the NIUM internal project and programme records portal." },
-      { property: "og:title", content: "Sign in · NIUM Project Records" },
-      { property: "og:description", content: "Sign in to the NIUM internal project and programme records portal." },
+      { title: "Sign in · Program Monitoring Center" },
+      { name: "description", content: "Sign in to the NIUM Program Monitoring Center." },
+      { property: "og:title", content: "Sign in · Program Monitoring Center" },
+      { property: "og:description", content: "Sign in to the NIUM Program Monitoring Center." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -59,7 +59,7 @@ function SignIn() {
       <div className="hidden flex-col justify-between bg-sidebar p-12 text-sidebar-foreground lg:flex">
         <div className="w-72 rounded-xl bg-card px-5 py-3"><img src={logo} alt="National Institute of Urban Management" width={433} height={116} className="h-auto w-full" /></div>
         <div>
-          <h1 className="text-4xl font-bold leading-tight">Project &amp; Programme Records</h1>
+          <h1 className="text-4xl font-bold leading-tight">Program Monitoring Center</h1>
           <p className="mt-4 max-w-md text-sidebar-foreground/80">
             Documentation of all completed and ongoing projects, programmes and trainings across NIUM verticals.
           </p>

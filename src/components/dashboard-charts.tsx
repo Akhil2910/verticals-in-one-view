@@ -159,7 +159,7 @@ export function FundsByVertical({ projects, verticals, onVertical }: { projects:
     .filter((d) => d.cost > 0)
     .sort((a, b) => b.cost - a.cost);
   return (
-    <ChartCard title="Funds by vertical" subtitle="Each bar is the total project cost, split into received and yet to receive. Click a bar to filter." icon={Wallet} tone="bg-due/15 text-[#9a6700]">
+    <ChartCard title="Funds by vertical" subtitle="Each bar is the total project cost, split into received and yet to receive. Click a bar to filter." icon={Wallet} tone="bg-due/15 text-[#0b7a8e]">
       {funds.length === 0 ? (
         <div className="flex h-40 w-full items-center justify-center text-sm text-muted-foreground">No project costs recorded in this view.</div>
       ) : (

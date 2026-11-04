@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { inDateRange, projectsQuery, verticalsQuery } from "@/lib/data";
 
 export const Route = createFileRoute("/app/vertical")({
-  head: () => ({ meta: [{ title: "My Projects · NIUM Project Records" }] }),
+  head: () => ({ meta: [{ title: "My Projects · Program Monitoring Center" }] }),
   loader: ({ context }) =>
     Promise.all([context.queryClient.ensureQueryData(projectsQuery), context.queryClient.ensureQueryData(verticalsQuery)]),
   component: MyVertical,

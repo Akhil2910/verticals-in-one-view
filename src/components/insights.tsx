@@ -19,7 +19,7 @@ export function InsightStrip({ projects, verticals, attention }: { projects: Pro
   const items: [string, string, string, LucideIcon, string][] = [
     ["Participants trained", totalParticipants(projects).toLocaleString("en-IN"), "across training programmes", Users, "bg-spent/10 text-spent"],
     ["Average progress", avgProgress === null ? "—" : `${avgProgress}%`, `of ${measured.length} ongoing project${measured.length === 1 ? "" : "s"}`, Gauge, "bg-ongoing/10 text-ongoing"],
-    ["Due on completed work", inrCompact(dueOnDone, 2), `${attention.duesOnCompleted.length} project${attention.duesOnCompleted.length === 1 ? "" : "s"} awaiting payment`, IndianRupee, "bg-due/15 text-[#9a6700]"],
+    ["Due on completed work", inrCompact(dueOnDone, 2), `${attention.duesOnCompleted.length} project${attention.duesOnCompleted.length === 1 ? "" : "s"} awaiting payment`, IndianRupee, "bg-due/15 text-[#0b7a8e]"],
     ["Verticals reporting", `${reporting} of ${verticals.length}`, verticals.length - reporting ? `${verticals.length - reporting} have no projects in this view` : "all verticals have projects", Building2, "bg-completed/10 text-[#0d7a53]"],
   ];
   return (
@@ -42,9 +42,9 @@ type TabKey = keyof Attention;
 const TABS: { key: TabKey; label: string; icon: typeof Clock; tone: string; empty: string }[] = [
   { key: "overdue", label: "Overdue", icon: AlertTriangle, tone: "text-onhold", empty: "No ongoing project is past its completion date." },
   { key: "dueSoon", label: "Due in 60 days", icon: CalendarClock, tone: "text-ongoing", empty: "Nothing is due to finish in the next 60 days." },
-  { key: "duesOnCompleted", label: "Payment due", icon: IndianRupee, tone: "text-[#9a6700]", empty: "Every completed project has been paid in full." },
+  { key: "duesOnCompleted", label: "Payment due", icon: IndianRupee, tone: "text-[#0b7a8e]", empty: "Every completed project has been paid in full." },
   { key: "onHold", label: "On hold", icon: PauseCircle, tone: "text-onhold", empty: "No project is on hold." },
-  { key: "withIssues", label: "Issues raised", icon: MessageSquareWarning, tone: "text-[#9a6700]", empty: "No open project reports an issue." },
+  { key: "withIssues", label: "Issues raised", icon: MessageSquareWarning, tone: "text-[#b5481c]", empty: "No open project reports an issue." },
   { key: "stale", label: "Not updated 30+ days", icon: Clock, tone: "text-muted-foreground", empty: "Every open project was updated in the last 30 days." },
 ];
 

@@ -86,10 +86,10 @@
   --secondary-foreground: #1b3561;
   --muted: #eef1f5;
   --muted-foreground: #5b6575;
-  /* Readable blue for small labels, links and eyebrows (saffron is too light for text on white). */
+  /* Readable blue for small labels, links and eyebrows. No yellow or pink anywhere in the app. */
   --brand: #256abf;
-  --accent: oklch(0.74 0.16 60);
-  --accent-foreground: oklch(0.22 0.04 260);
+  --accent: #e6effb;
+  --accent-foreground: #1b3561;
   --destructive: oklch(0.55 0.2 27);
   --destructive-foreground: oklch(0.98 0 0);
   --success: oklch(0.55 0.13 150);
@@ -99,24 +99,24 @@
   --completed: #1baf7a;
   --onhold: #eb6834;
   --received: #008300;
-  --due: #eda100;
+  --due: #0e9fb8;
   --spent: #6250d6;
   --border: #e1e6ed;
   --input: #d5dce6;
   --ring: #2a78d6;
   --chart-1: oklch(0.32 0.09 262);
-  --chart-2: oklch(0.74 0.16 60);
+  --chart-2: #eb6834;
   --chart-3: oklch(0.55 0.13 150);
   --chart-4: oklch(0.6 0.1 230);
   --chart-5: oklch(0.55 0.2 27);
   --sidebar: #14284a;
   --sidebar-foreground: #e8edf5;
-  --sidebar-primary: #f2a33a;
+  --sidebar-primary: #86b6ef;
   --sidebar-primary-foreground: #14284a;
   --sidebar-accent: #1f3a66;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #24406e;
-  --sidebar-ring: oklch(0.74 0.16 60);
+  --sidebar-ring: #86b6ef;
 }
 
 @layer base {

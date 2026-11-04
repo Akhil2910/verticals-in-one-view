@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { inr, pct, progressNotApplicable, projectsQuery, totals, verticalsQuery, yetToReceive, type Project } from "@/lib/data";
 
 export const Route = createFileRoute("/app/report")({
-  head: () => ({ meta: [{ title: "Report · NIUM Project Records" }] }),
+  head: () => ({ meta: [{ title: "Report · Program Monitoring Center" }] }),
   // The dashboard's "Report for this view" passes its vertical and status along.
   validateSearch: (search: Record<string, unknown>): { v?: string | undefined; status?: string | undefined } => ({
     v: typeof search["v"] === "string" ? search["v"] : undefined,
@@ -190,7 +190,7 @@ function Report() {
         )}
 
         <footer className="mt-8 flex justify-between border-t pt-2 text-[11px] text-muted-foreground">
-          <span>National Institute of Urban Management · Project Records</span>
+          <span>National Institute of Urban Management · Program Monitoring Center</span>
           <span>Generated {generated.toLocaleDateString("en-IN")}</span>
         </footer>
       </div>

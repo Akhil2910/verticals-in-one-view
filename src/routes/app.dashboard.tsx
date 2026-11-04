@@ -1,7 +1,7 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { AlertTriangle, Building, FileText, FolderKanban, History, Layers, PieChart, TrendingUp, Truck, type LucideIcon } from "lucide-react";
+import { AlertTriangle, Building, FileText, FolderKanban, History, Layers, PieChart, Plus, TrendingUp, Truck, type LucideIcon } from "lucide-react";
 import { PageHeader, ProjectsTable, Stats, VerticalCards } from "@/components/projects";
 import { FundsByVertical, PortfolioDonuts } from "@/components/dashboard-charts";
 import { FilterBar } from "@/components/dashboard-filters";
@@ -12,7 +12,7 @@ import { applyFilters, parseFilters, period, periodLabel, type DashboardFilters 
 import { attention as findAttention, distinctClients, financialYears } from "@/lib/insights";
 
 export const Route = createFileRoute("/app/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard · NIUM Project Records" }] }),
+  head: () => ({ meta: [{ title: "Dashboard · Program Monitoring Center" }] }),
   validateSearch: (search: Record<string, unknown>): DashboardFilters => parseFilters(search),
   beforeLoad: ({ context }) => {
     if (context.me.role === "vertical_head") throw redirect({ to: "/app/vertical" });
@@ -35,6 +35,7 @@ function Dashboard() {
   const { data: all } = useSuspenseQuery(projectsQuery);
   const { data: verticals } = useSuspenseQuery(verticalsQuery);
   const filters = Route.useSearch();
+  const { me } = Route.useRouteContext();
   const navigate = Route.useNavigate();
   const setFilters = (patch: Partial<DashboardFilters>) => navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
 
@@ -59,6 +60,11 @@ function Dashboard() {
         <Button asChild variant="outline" className="h-9">
           <Link to="/app/report" search={{ v: filters.v, status: filters.status }}><FileText className="h-4 w-4" />Report for this view</Link>
         </Button>
+        {me.role === "admin" && (
+          <Button asChild className="h-9">
+            <Link to="/app/projects/new" search={{ v: filters.v }}><Plus className="h-4 w-4" />Add project</Link>
+          </Button>
+        )}
       </PageHeader>
 
       {/* Page-wide filters and section links stay in reach while scrolling. */}

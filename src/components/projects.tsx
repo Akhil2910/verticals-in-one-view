@@ -97,7 +97,7 @@ export function Stats({ projects }: { projects: Project[] }) {
       <div className="p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-due/15 text-[#9a6700]"><IndianRupee className="h-3.5 w-3.5" /></span>
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-due/15 text-[#0b7a8e]"><IndianRupee className="h-3.5 w-3.5" /></span>
             Total project cost
           </div>
           <div className="text-xs text-muted-foreground">{pct(t.received, t.cost)}% received</div>

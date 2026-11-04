@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, LayoutDashboard } from "lucide-react";
+import { ArrowLeft, LayoutDashboard, Plus } from "lucide-react";
 import { AttentionPanel, Panel, RecentActivity, TrendChart } from "@/components/insights";
 import { PortfolioDonuts } from "@/components/dashboard-charts";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { PageHeader, ProjectsTable, SectionTitle, Stats } from "@/components/pro
 import { inDateRange, projectsQuery, verticalsQuery } from "@/lib/data";
 
 export const Route = createFileRoute("/app/verticals/$id")({
-  head: () => ({ meta: [{ title: "Vertical projects · NIUM Project Records" }] }),
+  head: () => ({ meta: [{ title: "Vertical projects · Program Monitoring Center" }] }),
   loader: ({ context }) =>
     Promise.all([context.queryClient.ensureQueryData(projectsQuery), context.queryClient.ensureQueryData(verticalsQuery)]),
   component: VerticalProjects,
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/app/verticals/$id")({
 
 function VerticalProjects() {
   const { id } = Route.useParams();
+  const { me } = Route.useRouteContext();
   const { data: projects } = useSuspenseQuery(projectsQuery);
   const { data: verticals } = useSuspenseQuery(verticalsQuery);
   const [range, setRange] = useState({ from: "", to: "" });
@@ -33,6 +34,7 @@ function VerticalProjects() {
         <PageHeader eyebrow="Vertical" title={name} description={`${list.length} project${list.length === 1 ? "" : "s"} in this view.`}>
           <DateRangeFilter from={range.from} to={range.to} onChange={(from, to) => setRange({ from, to })} />
           <Button asChild variant="outline" className="h-10"><Link to="/app/dashboard" search={{ v: id }}><LayoutDashboard className="h-4 w-4" />On dashboard</Link></Button>
+          {me.role === "admin" && <Button asChild className="h-10"><Link to="/app/projects/new" search={{ v: id }}><Plus className="h-4 w-4" />Add project</Link></Button>}
         </PageHeader>
       </div>
       <Stats projects={list} />

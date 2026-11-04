@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { projectQuery, verticalsQuery } from "@/lib/data";
 
 export const Route = createFileRoute("/app/projects/$id/")({
-  head: () => ({ meta: [{ title: "Project · NIUM Project Records" }] }),
+  head: () => ({ meta: [{ title: "Project · Program Monitoring Center" }] }),
   loader: ({ context, params }) =>
     Promise.all([context.queryClient.ensureQueryData(projectQuery(params.id)), context.queryClient.ensureQueryData(verticalsQuery)]),
   component: ViewProject,

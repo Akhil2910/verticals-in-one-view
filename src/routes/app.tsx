@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { LayoutDashboard, FolderKanban, Layers, Users, FileText, KeyRound, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, FolderKanban, Layers, Users, FileText, KeyRound, LogOut, Menu, Plus, X } from "lucide-react";
 import { signOut as endSession } from "@/lib/api.functions";
 import { fetchMe, projectsQuery, verticalsQuery } from "@/lib/data";
 import { verticalStyle } from "@/lib/vertical-style";
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/app")({
 
 const linkCls =
   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
-// Current page: lifted background, white text and a thin saffron marker on the left.
+// Current page: lifted background, white text and a thin light-blue marker on the left.
 const activeCls = { className: "!bg-white/10 !text-white shadow-[inset_3px_0_0_var(--sidebar-primary)]" };
 
 function AppLayout() {
@@ -51,6 +51,7 @@ function AppLayout() {
       <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/50">Menu</div>
       {me.role !== "vertical_head" && <Link to="/app/dashboard" className={linkCls} activeProps={activeCls}><LayoutDashboard className="h-4 w-4" />Dashboard</Link>}
       {me.role === "vertical_head" && <Link to="/app/vertical" className={linkCls} activeProps={activeCls}><FolderKanban className="h-4 w-4" />My Projects</Link>}
+      {me.role === "admin" && <Link to="/app/projects/new" className={linkCls} activeProps={activeCls}><Plus className="h-4 w-4" />New project</Link>}
       <Link to="/app/report" className={linkCls} activeProps={activeCls}><FileText className="h-4 w-4" />Reports</Link>
       <Link to="/app/account" className={linkCls} activeProps={activeCls}><KeyRound className="h-4 w-4" />Change password</Link>
       {showVerticals && verticals.data && (
@@ -93,8 +94,8 @@ function AppLayout() {
             <button className="p-1 lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu"><X className="h-5 w-5" /></button>
           </div>
           <div className="mt-3 px-1">
-            <div className="font-serif text-base font-bold leading-none">Project Records</div>
-            <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-sidebar-primary">Projects &amp; Programmes</div>
+            <div className="font-serif text-base font-bold leading-none">Program Monitoring Center</div>
+            <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-sidebar-primary">NIUM</div>
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-5">{nav}</div>
