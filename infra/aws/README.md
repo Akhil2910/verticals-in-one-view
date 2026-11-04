@@ -49,7 +49,9 @@ Use this when the data already lives in this app's own database, for example the
    infra/aws/with-db.sh npm run db:restore -- ~/nium-data.json
    rm ~/nium-data.json
    ```
-   The restore runs in one transaction and refuses to run on a database that already has records.
+   The restore runs in one transaction and refuses to run on a database that already has records. To overwrite them instead, add `--replace`; the records it removes are saved first as `nium-data-before-replace-<time>.json`.
+
+**Prefer plain SQL?** `DATABASE_URL=postgres://... npm run db:export-sql -- <folder>` writes two psql scripts instead. Use `nium_full.sql` for an empty database (it creates the tables too) or `nium_data.sql` for one the app already set up (it replaces all records). Load either with `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f <file>`; on the server, `infra/aws/with-db.sh sh -c 'psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f ~/nium_data.sql'`. The same rule applies: never commit them.
 
 ## Moving the existing data from Supabase (Lovable Cloud)
 

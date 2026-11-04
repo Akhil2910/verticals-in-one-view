@@ -17,7 +17,8 @@
     "db:migrate": "node scripts/migrate.mjs",
     "db:import-supabase": "node scripts/import-from-supabase.mjs",
     "db:export": "node scripts/export-data.mjs",
-    "db:restore": "node scripts/restore-data.mjs"
+    "db:restore": "node scripts/restore-data.mjs",
+    "db:export-sql": "node scripts/export-sql.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"

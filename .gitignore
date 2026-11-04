@@ -50,3 +50,5 @@ supabase-export/
 # Data exports (password hashes, documents): never commit
 nium-data*.json
 *.nium-data.json
+nium_full.sql
+nium_data.sql
