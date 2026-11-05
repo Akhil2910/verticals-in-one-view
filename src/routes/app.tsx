@@ -93,10 +93,6 @@ function AppLayout() {
             <div className="flex-1 rounded-lg bg-card px-3 py-2"><img src={logo} alt="National Institute of Urban Management" width={433} height={116} className="h-auto w-full" /></div>
             <button className="p-1 lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu"><X className="h-5 w-5" /></button>
           </div>
-          <div className="mt-3 px-1">
-            <div className="font-serif text-base font-bold leading-none">Program Monitoring Center</div>
-            <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-sidebar-primary">NIUM</div>
-          </div>
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-5">{nav}</div>
         <div className="border-t border-sidebar-border p-4">
@@ -116,11 +112,18 @@ function AppLayout() {
 
       <header className="no-print sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-card/80 px-4 backdrop-blur lg:hidden">
         <button onClick={() => setOpen(true)} aria-label="Open menu"><Menu className="h-5 w-5" /></button>
-        <span className="font-serif font-bold">NIUM Records</span>
+        <span className="font-serif font-bold">Program Monitoring Center</span>
       </header>
-      <div className="no-print h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+      {/* App banner on every page (phones show the name in the header above instead). */}
+      <div className="no-print hidden items-center justify-between gap-4 bg-gradient-to-r from-sidebar via-primary to-brand px-8 py-4 text-white lg:flex">
+        <div>
+          <div className="font-serif text-2xl font-bold leading-tight tracking-tight">Program Monitoring Center</div>
+          <div className="mt-0.5 text-[11px] uppercase tracking-[0.2em] text-white/70">National Institute of Urban Management</div>
+        </div>
+        <div className="text-right text-xs text-white/70">{new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
+      </div>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-8 print:max-w-none print:p-0">
+      <main className="px-4 py-8 sm:px-8 print:p-0">
         <Outlet />
       </main>
     </div>
