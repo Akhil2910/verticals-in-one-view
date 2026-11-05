@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { LayoutDashboard, FolderKanban, Layers, Users, FileText, KeyRound, LogOut, Menu, Plus, X } from "lucide-react";
+import { LayoutDashboard, FolderKanban, Layers, List, Users, FileText, KeyRound, LogOut, Menu, Plus, X } from "lucide-react";
 import { signOut as endSession } from "@/lib/api.functions";
 import { fetchMe, projectsQuery, verticalsQuery } from "@/lib/data";
 import { verticalStyle } from "@/lib/vertical-style";
@@ -51,6 +51,7 @@ function AppLayout() {
       <div className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-sidebar-foreground/50">Menu</div>
       {me.role !== "vertical_head" && <Link to="/app/dashboard" className={linkCls} activeProps={activeCls}><LayoutDashboard className="h-4 w-4" />Dashboard</Link>}
       {me.role === "vertical_head" && <Link to="/app/vertical" className={linkCls} activeProps={activeCls}><FolderKanban className="h-4 w-4" />My Projects</Link>}
+      {me.role !== "vertical_head" && <Link to="/app/projects" activeOptions={{ exact: true }} className={linkCls} activeProps={activeCls}><List className="h-4 w-4" />All projects</Link>}
       {me.role === "admin" && <Link to="/app/projects/new" className={linkCls} activeProps={activeCls}><Plus className="h-4 w-4" />New project</Link>}
       <Link to="/app/report" className={linkCls} activeProps={activeCls}><FileText className="h-4 w-4" />Reports</Link>
       <Link to="/app/account" className={linkCls} activeProps={activeCls}><KeyRound className="h-4 w-4" />Change password</Link>

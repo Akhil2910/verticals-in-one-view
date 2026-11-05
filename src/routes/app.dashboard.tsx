@@ -1,8 +1,9 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { AlertTriangle, Building, FileText, FolderKanban, History, Layers, PieChart, Plus, TrendingUp, Truck, type LucideIcon } from "lucide-react";
-import { PageHeader, ProjectsTable, Stats, VerticalCards } from "@/components/projects";
+import { AlertTriangle, Building, CalendarRange, ClipboardCheck, FileText, Gauge, History, Layers, List, PieChart, Plus, TrendingUp, Truck, type LucideIcon } from "lucide-react";
+import { PageHeader, Stats, VerticalCards } from "@/components/projects";
+import { DataCompleteness, DeliveryHealth, ReceivablesAgeing, YearOnYear } from "@/components/analytics";
 import { FundsByVertical, PortfolioDonuts } from "@/components/dashboard-charts";
 import { FilterBar } from "@/components/dashboard-filters";
 import { AttentionPanel, ClientsPanel, InsightStrip, Panel, RecentActivity, TopProjects, TrendChart, VendorsPanel } from "@/components/insights";
@@ -25,10 +26,12 @@ export const Route = createFileRoute("/app/dashboard")({
 const SECTIONS = [
   ["overview", "Overview"],
   ["charts", "Charts"],
+  ["delivery", "Delivery & dues"],
+  ["years", "Year on year"],
   ["partners", "Clients & vendors"],
   ["verticals", "Verticals"],
-  ["projects", "Projects"],
   ["attention", "Needs attention"],
+  ["quality", "Data quality"],
 ] as const;
 
 function Dashboard() {
@@ -58,6 +61,9 @@ function Dashboard() {
         description={label === "All time" ? "Every project and programme across NIUM, in one view." : <>Activity during <span className="font-semibold text-foreground">{label}</span>: projects running at any point in this period.</>}
       >
         <Button asChild variant="outline" className="h-9">
+          <Link to="/app/projects"><List className="h-4 w-4" />All projects</Link>
+        </Button>
+        <Button asChild variant="outline" className="h-9">
           <Link to="/app/report" search={{ v: filters.v, status: filters.status }}><FileText className="h-4 w-4" />Report for this view</Link>
         </Button>
         {me.role === "admin" && (
@@ -75,7 +81,6 @@ function Dashboard() {
             <a key={id} href={`#${id}`} className="shrink-0 rounded-md px-2.5 py-1 text-muted-foreground transition hover:bg-muted hover:text-foreground">
               {text}
               {id === "attention" && flagged > 0 && <span className="ml-1.5 rounded-full bg-onhold/15 px-1.5 text-xs font-semibold text-foreground">{flagged}</span>}
-              {id === "projects" && <span className="ml-1.5 text-xs tabular-nums">{projects.length}</span>}
             </a>
           ))}
         </nav>
@@ -109,6 +114,22 @@ function Dashboard() {
         </div>
       </div>
 
+      <div id="delivery" className="grid scroll-mt-40 gap-4 xl:grid-cols-3">
+        <div className="space-y-3 xl:col-span-2">
+          <SectionHeading icon={Gauge} title="Delivery health" hint="Ongoing projects against their due dates." />
+          <div className="rounded-xl border bg-card p-5 shadow-sm"><DeliveryHealth projects={projects} verticals={verticals} /></div>
+        </div>
+        <div className="space-y-3">
+          <SectionHeading icon={History} title="Dues ageing" hint="Unpaid amounts on completed work, by time since completion." />
+          <div className="rounded-xl border bg-card p-5 shadow-sm"><ReceivablesAgeing projects={projects} /></div>
+        </div>
+      </div>
+
+      <section id="years" className="scroll-mt-40 space-y-3">
+        <SectionHeading icon={CalendarRange} title="Year on year" hint="By financial year of commencement (April–March)." />
+        <div className="rounded-xl border bg-card p-5 shadow-sm"><YearOnYear projects={projects} /></div>
+      </section>
+
       <div id="partners" className="grid scroll-mt-40 gap-4 lg:grid-cols-2">
         <div className="space-y-3">
           <SectionHeading icon={Building} title="Clients" hint="By total project cost. Click one to filter." />
@@ -127,11 +148,6 @@ function Dashboard() {
         <VerticalCards verticals={shownVerticals} projects={projects} styleFrom={verticals} />
       </section>
 
-      <section id="projects" className="scroll-mt-40 space-y-3">
-        <SectionHeading icon={FolderKanban} title="Projects" hint="Narrow this list with its own filters; sort by any column." />
-        <ProjectsTable projects={projects} verticals={verticals} clients={distinctClients(projects)} />
-      </section>
-
       <div id="attention" className="grid scroll-mt-40 gap-4 xl:grid-cols-3">
         <div className="space-y-3 xl:col-span-2">
           <SectionHeading icon={AlertTriangle} title="Needs attention" hint="Follow-ups worked out from dates, payments and status." />
@@ -142,6 +158,11 @@ function Dashboard() {
           <div className="rounded-xl border bg-card p-5 shadow-sm"><RecentActivity projects={projects} verticals={verticals} /></div>
         </div>
       </div>
+
+      <section id="quality" className="scroll-mt-40 space-y-3">
+        <SectionHeading icon={ClipboardCheck} title="Data quality" hint="Share of projects with each detail filled in. Gaps here leave the analytics above incomplete." />
+        <div className="rounded-xl border bg-card p-5 shadow-sm"><DataCompleteness projects={projects} verticals={verticals} /></div>
+      </section>
     </div>
   );
 }
