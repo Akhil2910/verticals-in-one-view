@@ -6,7 +6,8 @@ import type { ProjectFile } from "./types";
 
 const server = async () => ({ ...(await import("@/server/db.server")), ...(await import("@/server/auth.server")) });
 
-export const MAX_FILE_BYTES = 10 * 1024 * 1024;
+export const MAX_FILE_MB = 50;
+export const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 
 // Only formats that are safe to hand back to a browser. No SVG or HTML: those can carry scripts.
 export const PHOTO_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif" };
@@ -70,7 +71,7 @@ export const uploadProjectFile = createServerFn({ method: "POST" })
     if (!allowed[data.file.type]) {
       throw new Error(data.kind === "photo" ? "Photos must be JPG, PNG, WebP or GIF." : "That file type isn't allowed. Use PDF, Word, Excel, PowerPoint, CSV, text, ZIP or an image.");
     }
-    if (data.file.size > MAX_FILE_BYTES) throw new Error("Files can be at most 10 MB.");
+    if (data.file.size > MAX_FILE_BYTES) throw new Error(`Files can be at most ${MAX_FILE_MB} MB.`);
     const bytes = Buffer.from(await data.file.arrayBuffer());
     if (PHOTO_TYPES[data.file.type] && !looksLikeImage(bytes)) throw new Error("That file isn't a valid image.");
     const { db } = await server();

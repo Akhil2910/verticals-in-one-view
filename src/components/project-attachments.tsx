@@ -21,7 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { deleteProjectFile, DOCUMENT_TYPES, listProjectFiles, MAX_FILE_BYTES, PHOTO_TYPES, renameProjectFile, uploadProjectFile } from "@/lib/files.functions";
+import { deleteProjectFile, DOCUMENT_TYPES, listProjectFiles, MAX_FILE_BYTES, MAX_FILE_MB, PHOTO_TYPES, renameProjectFile, uploadProjectFile } from "@/lib/files.functions";
 import { fmtDate } from "@/lib/data";
 import type { ProjectFile } from "@/lib/types";
 
@@ -191,7 +191,7 @@ function UploadBox({ projectId, onDone }: { projectId: string; onDone: () => voi
 
   const pick = (f: File | undefined) => {
     if (!f) return;
-    if (f.size > MAX_FILE_BYTES) { toast.error("Files can be at most 10 MB."); return; }
+    if (f.size > MAX_FILE_BYTES) { toast.error(`Files can be at most ${MAX_FILE_MB} MB.`); return; }
     setFile(f);
     // Suggest a name from the file name; the person can change it.
     if (!title.trim()) setTitle(f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim());
@@ -263,7 +263,7 @@ function UploadBox({ projectId, onDone }: { projectId: string; onDone: () => voi
             <span className="text-muted-foreground">
               Drop a {kind} here, or{" "}
               <button type="button" onClick={() => input.current?.click()} className="font-medium text-primary hover:underline">browse</button>
-              . {kind === "photo" ? "JPG, PNG, WebP or GIF" : "PDF, Word, Excel, PowerPoint, CSV, text, ZIP or an image"}, up to 10 MB.
+              . {kind === "photo" ? "JPG, PNG, WebP or GIF" : "PDF, Word, Excel, PowerPoint, CSV, text, ZIP or an image"}, up to {MAX_FILE_MB} MB.
             </span>
           )}
         </div>
