@@ -25,6 +25,18 @@ export const DOCUMENT_TYPES: Record<string, string> = {
   ...PHOTO_TYPES, // a scanned letter saved as a JPG is still a document
 };
 
+/**
+ * The type a file is stored and served as, or null if it isn't allowed. Browsers label the same
+ * format differently (Windows calls a ZIP "application/x-zip-compressed", and some send nothing
+ * for Office files), so an unknown label falls back to the file's extension.
+ */
+export function allowedType(claimed: string, fileName: string, allowed: Record<string, string>) {
+  if (allowed[claimed]) return claimed;
+  const ext = fileName.toLowerCase().match(/\.([a-z0-9]+)$/)?.[1];
+  if (!ext) return null;
+  return Object.keys(allowed).find((t) => allowed[t] === (ext === "jpeg" ? "jpg" : ext)) ?? null;
+}
+
 /** The browser's claimed type is just a label, so images are also checked by their first bytes. */
 export function looksLikeImage(b: Uint8Array) {
   const at = (i: number, ...xs: number[]) => xs.every((x, j) => b[i + j] === x);
@@ -68,16 +80,17 @@ export const uploadProjectFile = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const me = await accessProject(data.projectId, true);
     const allowed = data.kind === "photo" ? PHOTO_TYPES : DOCUMENT_TYPES;
-    if (!allowed[data.file.type]) {
+    const type = allowedType(data.file.type, data.file.name, allowed);
+    if (!type) {
       throw new Error(data.kind === "photo" ? "Photos must be JPG, PNG, WebP or GIF." : "That file type isn't allowed. Use PDF, Word, Excel, PowerPoint, CSV, text, ZIP or an image.");
     }
     if (data.file.size > MAX_FILE_BYTES) throw new Error(`Files can be at most ${MAX_FILE_MB} MB.`);
     const bytes = Buffer.from(await data.file.arrayBuffer());
-    if (PHOTO_TYPES[data.file.type] && !looksLikeImage(bytes)) throw new Error("That file isn't a valid image.");
+    if (PHOTO_TYPES[type] && !looksLikeImage(bytes)) throw new Error("That file isn't a valid image.");
     const { db } = await server();
     const [row] = await db()<{ id: string }[]>`
       insert into project_files (project_id, kind, title, file_name, mime_type, size_bytes, data, uploaded_by, uploaded_by_name)
-      values (${data.projectId}, ${data.kind}, ${data.title}, ${data.file.name.slice(0, 255)}, ${data.file.type}, ${bytes.length}, ${bytes},
+      values (${data.projectId}, ${data.kind}, ${data.title}, ${data.file.name.slice(0, 255)}, ${type}, ${bytes.length}, ${bytes},
               ${me.id}, ${me.full_name ?? me.email})
       returning id`;
     return row;
